@@ -1,0 +1,23 @@
+<Page
+    x:Class="ViveToolWinUI.Pages.ViveToolPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer Padding="16" VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="20">
+            <TextBlock Text="ViveTool 操作" FontSize="22" FontWeight="SemiBold"/>
+
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <ComboBox x:Name="cmbAction" Width="200" PlaceholderText="选择动作">
+                    <ComboBoxItem Content="启用 (enable)"/>
+                    <ComboBoxItem Content="禁用 (disable)"/>
+                    <ComboBoxItem Content="查询 (query)"/>
+                </ComboBox>
+                <TextBox x:Name="txtFeatureId" Width="220" PlaceholderText="Feature ID (如 39281392)"/>
+                <Button Content="执行" Click="Run_Click" Width="120"/>
+            </StackPanel>
+
+            <TextBox x:Name="txtOutput" AcceptsReturn="True" Height="240" TextWrapping="Wrap" IsReadOnly="True" PlaceholderText="输出"/>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
