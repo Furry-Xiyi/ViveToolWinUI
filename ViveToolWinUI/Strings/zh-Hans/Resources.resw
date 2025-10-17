@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+
+  <!-- ViveTool 页面（操作区） -->
+  <data name="PageTitle.Text" xml:space="preserve"><value>ViveTool 操作</value></data>
+  <data name="ActionTitle.Text" xml:space="preserve"><value>动作</value></data>
+
+  <!-- ComboBoxItem 使用 .Content（保留不变） -->
+  <data name="ActionEnable.Content" xml:space="preserve"><value>启用 (enable)</value></data>
+  <data name="ActionDisable.Content" xml:space="preserve"><value>禁用 (disable)</value></data>
+  <data name="ActionReset.Content" xml:space="preserve"><value>重置 (reset)</value></data>
+
+  <data name="FeatureIdLabel.Text" xml:space="preserve"><value>Feature ID</value></data>
+  <data name="FeatureIdBox.PlaceholderText" xml:space="preserve"><value>例如 39281392，支持用逗号分隔多个 ID</value></data>
+
+  <data name="OptionalParamsLabel.Text" xml:space="preserve"><value>可选参数</value></data>
+  <data name="AutoReboot.Content" xml:space="preserve"><value>自动重启</value></data>
+  <data name="VerboseOutput.Content" xml:space="preserve"><value>详细输出</value></data>
+
+  <data name="RunButton.Content" xml:space="preserve"><value>执行</value></data>
+
+  <data name="QuickCmdTitle.Text" xml:space="preserve"><value>快捷命令</value></data>
+
+  <!-- 预设命令（保持原文） -->
+  <!--
+  <data name="Preset_Query.Content" xml:space="preserve"><value>/query</value></data>
+  ...
+  -->
+
+  <data name="CustomArgsLabel.Text" xml:space="preserve"><value>自定义参数</value></data>
+  <data name="CustomArgsBox.PlaceholderText" xml:space="preserve"><value>例如: /enable /id:39281392 或 /query</value></data>
+
+  <data name="RunCustomButton.Content" xml:space="preserve"><value>执行自定义</value></data>
+  <data name="OpenOutputPageButton.Content" xml:space="preserve"><value>查看完整输出</value></data>
+
+  <data name="RecentActionsLabel.Text" xml:space="preserve"><value>最近操作</value></data>
+
+  <!-- SettingsPage（设置页） -->
+  <data name="AppearanceGroup.Text" xml:space="preserve"><value>外观与材质</value></data>
+  <data name="BehaviorGroup.Text" xml:space="preserve"><value>行为</value></data>
+  <data name="AboutGroup.Text" xml:space="preserve"><value>关于</value></data>
+
+  <!-- 应用主题 Expander Header -->
+  <data name="ThemeHeader.Title.Text" xml:space="preserve"><value>主题</value></data>
+  <data name="ThemeHeader.Subtitle.Text" xml:space="preserve"><value>选择应用主题</value></data>
+  <data name="ThemeSystem.Text" xml:space="preserve"><value>跟随系统</value></data>
+  <data name="ThemeLight.Text" xml:space="preserve"><value>浅色</value></data>
+  <data name="ThemeDark.Text" xml:space="preserve"><value>深色</value></data>
+
+  <!-- 背景材质 Expander Header -->
+  <data name="MaterialHeader.Title.Text" xml:space="preserve"><value>背景材质</value></data>
+  <data name="MaterialHeader.Subtitle.Text" xml:space="preserve"><value>选择应用材质</value></data>
+  <data name="MaterialAcrylic.Text" xml:space="preserve"><value>亚克力</value></data>
+  <data name="MaterialMica.Text" xml:space="preserve"><value>云母</value></data>
+  <data name="MaterialMicaAlt.Text" xml:space="preserve"><value>云母Alt</value></data>
+
+  <!-- 行为 / 内核管理 -->
+  <data name="KernelHeader.Title.Text" xml:space="preserve"><value>内核管理</value></data>
+  <data name="KernelHeader.Subtitle.Text" xml:space="preserve"><value>检测更新 / 自定义链接 / 导入 zip</value></data>
+
+  <data name="BtnCheckViveToolUpdate.Text" xml:space="preserve"><value>检测更新</value></data>
+  <data name="BtnCustomUpdateLink.Text" xml:space="preserve"><value>自定义更新链接</value></data>
+  <data name="BtnImportKernelZip.Text" xml:space="preserve"><value>导入内核 Zip</value></data>
+  <data name="BtnOpenCoreFolder.Text" xml:space="preserve"><value>打开内核文件夹</value></data>
+  <data name="BtnBackupCore.Text" xml:space="preserve"><value>备份内核到桌面</value></data>
+  <data name="BtnRestoreCore.Text" xml:space="preserve"><value>从备份还原</value></data>
+
+  <data name="BtnExportSettings.Text" xml:space="preserve"><value>导出设置 (.json)</value></data>
+  <data name="BtnImportSettings.Text" xml:space="preserve"><value>导入设置 (.json)</value></data>
+  <data name="BtnResetSettings.Text" xml:space="preserve"><value>重置设置</value></data>
+
+  <data name="BtnTestViveTool.Text" xml:space="preserve"><value>诊断: vivetool /version</value></data>
+
+  <data name="AutoUpdateViveToolToggleHeader.Text" xml:space="preserve"><value>自动更新 ViveTool 内核</value></data>
+
+  <!-- 关于面板封面与内容 -->
+  <data name="AboutTitle.Text" xml:space="preserve"><value>关于</value></data>
+  <data name="AppTitle.Text" xml:space="preserve"><value>ViveTool</value></data>
+  <data name="AppPublisher.Text" xml:space="preserve"><value>由 YourPublisherName 提供</value></data>
+  <data name="AppVersion.Text" xml:space="preserve"><value>版本 {0}</value></data>
+
+  <data name="JoinQQButton.Text" xml:space="preserve"><value>加入QQ群</value></data>
+  <data name="JoinDiscordButton.Text" xml:space="preserve"><value>加入 Discord</value></data>
+  <data name="FeedbackButton.Text" xml:space="preserve"><value>发送反馈</value></data>
+
+  <!-- 额外通用文本 -->
+  <data name="AppearanceSubheader.Text" xml:space="preserve"><value>外观设置</value></data>
+  <data name="BehaviorSubheader.Text" xml:space="preserve"><value>行为与内核</value></data>
+  <data name="AboutSubheader.Text" xml:space="preserve"><value>应用信息与支持</value></data>
+</root>

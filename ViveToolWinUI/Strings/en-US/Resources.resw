@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+
+  <!-- ViveTool page / action area -->
+  <data name="PageTitle.Text" xml:space="preserve"><value>ViveTool Actions</value></data>
+  <data name="ActionTitle.Text" xml:space="preserve"><value>Action</value></data>
+
+  <!-- ComboBox items (ComboBoxItem uses .Content) -->
+  <data name="ActionEnable.Content" xml:space="preserve"><value>Enable</value></data>
+  <data name="ActionDisable.Content" xml:space="preserve"><value>Disable</value></data>
+  <data name="ActionReset.Content" xml:space="preserve"><value>Reset</value></data>
+
+  <data name="FeatureIdLabel.Text" xml:space="preserve"><value>Feature ID</value></data>
+  <data name="FeatureIdBox.PlaceholderText" xml:space="preserve"><value>e.g. 39281392, support multiple IDs separated by comma</value></data>
+
+  <data name="OptionalParamsLabel.Text" xml:space="preserve"><value>Optional parameters</value></data>
+  <data name="AutoReboot.Content" xml:space="preserve"><value>Auto reboot</value></data>
+  <data name="VerboseOutput.Content" xml:space="preserve"><value>Verbose output</value></data>
+
+  <data name="RunButton.Content" xml:space="preserve"><value>Run</value></data>
+
+  <data name="QuickCmdTitle.Text" xml:space="preserve"><value>Quick Commands</value></data>
+
+  <!-- Preset buttons (commands left as content strings) -->
+  <data name="Preset_Query.Content" xml:space="preserve"><value>/query</value></data>
+  <data name="Preset_FullReset.Content" xml:space="preserve"><value>/fullreset</value></data>
+  <data name="Preset_ChangeStamp.Content" xml:space="preserve"><value>/changestamp</value></data>
+
+  <data name="Preset_QuerySubs.Content" xml:space="preserve"><value>/querysubs</value></data>
+  <data name="Preset_AddSub.Content" xml:space="preserve"><value>/addsub</value></data>
+  <data name="Preset_DelSub.Content" xml:space="preserve"><value>/delsub</value></data>
+
+  <data name="Preset_NotifyUsage.Content" xml:space="preserve"><value>/notifyusage</value></data>
+  <data name="Preset_Export.Content" xml:space="preserve"><value>/export</value></data>
+  <data name="Preset_Import.Content" xml:space="preserve"><value>/import</value></data>
+
+  <data name="Preset_LkgStatus.Content" xml:space="preserve"><value>/lkgstatus</value></data>
+  <data name="Preset_FixLkg.Content" xml:space="preserve"><value>/fixlkg</value></data>
+  <data name="Preset_FixPriority.Content" xml:space="preserve"><value>/fixpriority</value></data>
+
+  <data name="Preset_AppUpdate.Content" xml:space="preserve"><value>/appupdate</value></data>
+  <data name="Preset_DictUpdate.Content" xml:space="preserve"><value>/dictupdate</value></data>
+  <data name="Preset_Version.Content" xml:space="preserve"><value>/version</value></data>
+
+  <data name="Preset_Install.Content" xml:space="preserve"><value>/install</value></data>
+  <data name="Preset_Uninstall.Content" xml:space="preserve"><value>/uninstall</value></data>
+  <data name="Preset_Help.Content" xml:space="preserve"><value>/help</value></data>
+
+  <data name="Preset_Apply.Content" xml:space="preserve"><value>/apply</value></data>
+  <data name="Preset_Rollback.Content" xml:space="preserve"><value>/rollback</value></data>
+  <data name="Preset_QueryFormat.Content" xml:space="preserve"><value>/query-format</value></data>
+
+  <!-- SettingsPage (appearance / behavior / about) -->
+  <data name="AppearanceGroup.Text" xml:space="preserve"><value>Appearance &amp; Material</value></data>
+  <data name="BehaviorGroup.Text" xml:space="preserve"><value>Behavior</value></data>
+  <data name="AboutGroup.Text" xml:space="preserve"><value>About</value></data>
+
+  <!-- Theme expander -->
+  <data name="ThemeHeader.Title.Text" xml:space="preserve"><value>App theme</value></data>
+  <data name="ThemeHeader.Subtitle.Text" xml:space="preserve"><value>Choose app theme</value></data>
+  <data name="ThemeSystem.Text" xml:space="preserve"><value>Follow system</value></data>
+  <data name="ThemeLight.Text" xml:space="preserve"><value>Light</value></data>
+  <data name="ThemeDark.Text" xml:space="preserve"><value>Dark</value></data>
+
+  <!-- Material expander -->
+  <data name="MaterialHeader.Title.Text" xml:space="preserve"><value>Background material</value></data>
+  <data name="MaterialHeader.Subtitle.Text" xml:space="preserve"><value>Choose background material</value></data>
+
+  <!-- Kernel management -->
+  <data name="KernelHeader.Title.Text" xml:space="preserve"><value>Kernel management</value></data>
+  <data name="KernelHeader.Subtitle.Text" xml:space="preserve"><value>Check updates / Custom link / Import zip</value></data>
+
+  <data name="BtnCheckViveToolUpdate.Text" xml:space="preserve"><value>Check for updates</value></data>
+  <data name="BtnCustomUpdateLink.Text" xml:space="preserve"><value>Custom update link</value></data>
+  <data name="BtnImportKernelZip.Text" xml:space="preserve"><value>Import kernel Zip</value></data>
+  <data name="BtnOpenCoreFolder.Text" xml:space="preserve"><value>Open core folder</value></data>
+  <data name="BtnBackupCore.Text" xml:space="preserve"><value>Backup core to Desktop</value></data>
+  <data name="BtnRestoreCore.Text" xml:space="preserve"><value>Restore from backup</value></data>
+
+  <data name="BtnExportSettings.Text" xml:space="preserve"><value>Export settings (.json)</value></data>
+  <data name="BtnImportSettings.Text" xml:space="preserve"><value>Import settings (.json)</value></data>
+  <data name="BtnResetSettings.Text" xml:space="preserve"><value>Reset settings</value></data>
+
+  <data name="BtnTestViveTool.Text" xml:space="preserve"><value>Diagnostics: vivetool /version</value></data>
+
+  <data name="AutoUpdateViveToolToggleHeader.Text" xml:space="preserve"><value>Auto-update ViveTool kernel</value></data>
+
+  <!-- About header and content -->
+  <data name="AboutTitle.Text" xml:space="preserve"><value>About</value></data>
+  <data name="AppTitle.Text" xml:space="preserve"><value>ViveTool</value></data>
+  <data name="AppPublisher.Text" xml:space="preserve"><value>by YourPublisherName</value></data>
+  <data name="AppVersion.Text" xml:space="preserve"><value>Version {0}</value></data>
+
+  <data name="JoinQQButton.Text" xml:space="preserve"><value>Join QQ Group</value></data>
+  <data name="JoinDiscordButton.Text" xml:space="preserve"><value>Join Discord</value></data>
+  <data name="FeedbackButton.Text" xml:space="preserve"><value>Send feedback</value></data>
+
+  <!-- extra helpers -->
+  <data name="AppearanceSubheader.Text" xml:space="preserve"><value>Appearance settings</value></data>
+  <data name="BehaviorSubheader.Text" xml:space="preserve"><value>Behavior &amp; kernel</value></data>
+  <data name="AboutSubheader.Text" xml:space="preserve"><value>App info &amp; support</value></data>
+</root>
