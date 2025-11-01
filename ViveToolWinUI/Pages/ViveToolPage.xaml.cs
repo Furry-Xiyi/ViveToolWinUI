@@ -157,6 +157,16 @@ namespace ViveToolWinUI.Pages
             if (!IsValidFeatureIdInput(featureId)) { (App.MainWindow as MainWindow)?.ShowError("Feature ID 格式无效"); return; }
 
             var normalized = NormalizeIds(featureId);
+
+            // Safety: reject obviously abusive/accidental long inputs to avoid vivetool hanging
+            var parts = normalized.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length > 100) { (App.MainWindow as MainWindow)?.ShowError("指定的 Feature ID 数量太多"); return; }
+            foreach (var p in parts)
+            {
+                // Normal feature IDs are 8 digits (e.g. 56848060). Reject inputs that are not 8 digits to avoid hangs.
+                if (p.Length != 8) { (App.MainWindow as MainWindow)?.ShowError("单个 Feature ID 长度应为 8 位（例如 56848060）"); return; }
+            }
+
             var sb = new StringBuilder();
             sb.Append($"/{verb} /id:{normalized}");
             if (chkVerbose.IsChecked == true) sb.Append(" /verbose");
@@ -187,33 +197,177 @@ namespace ViveToolWinUI.Pages
             _isRunning = true;
             try
             {
-                SetRunningUI(true, "以管理员 CMD 执行中...");
-                var cmdArgs = $"/k \"\"{exePath}\" {vivetoolArguments}\"";
+                SetRunningUI(true, "正在以管理员模式执行...");
+
+                // Create temp files
+                var tempDir = Path.GetTempPath();
+                var id = Guid.NewGuid().ToString("N");
+                var outFile = Path.Combine(tempDir, $"vivetool_out_{id}.txt");
+                var batFile = Path.Combine(tempDir, $"vivetool_cmd_{id}.bat");
+
+                // Batch writes stdout+stderr to outFile and returns vivetool exit code
+                var batContent = new StringBuilder();
+                batContent.AppendLine("@echo off");
+                // Use pushd to ensure working dir
+                batContent.AppendLine($"pushd \"{GetViveToolFolder()}\"");
+                batContent.AppendLine($"\"{exePath}\" {vivetoolArguments} > \"{outFile}\" 2>&1");
+
+                // If this is an enable/disable/reset that targets specific IDs, run a verification query and append
+                try
+                {
+                    var m = System.Text.RegularExpressions.Regex.Match(vivetoolArguments, "/id:([0-9,]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    if (m.Success)
+                    {
+                        var ids = m.Groups[1].Value; // e.g. "123,456"
+                        batContent.AppendLine($"echo ----QUERY-RESULTS---- >> \"{outFile}\"");
+                        batContent.AppendLine($"\"{exePath}\" /query /id:{ids} >> \"{outFile}\" 2>&1");
+                      }
+                }
+                catch { }
+
+                batContent.AppendLine("exit /b %ERRORLEVEL%");
+
+                await File.WriteAllTextAsync(batFile, batContent.ToString(), System.Text.Encoding.UTF8);
+
+                // Start elevated hidden via PowerShell and wait
+                var psCommand = "Start-Process -FilePath 'cmd.exe' -ArgumentList '/c \"" + batFile + "\"' -Verb RunAs -WindowStyle Hidden -Wait; exit $LASTEXITCODE";
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "cmd.exe",
-                    Arguments = cmdArgs,
-                    UseShellExecute = true,
-                    Verb = "runas",
+                    FileName = "powershell.exe",
+                    Arguments = $"-NoProfile -WindowStyle Hidden -Command \"{psCommand}\"",
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
                     WorkingDirectory = GetViveToolFolder()
                 };
 
-                AppendLog($"启动管理员 CMD: cmd.exe {cmdArgs}");
+                AppendLog($"启动提升进程: powershell.exe {psi.Arguments}");
+
+                Process? proc = null;
                 try
                 {
-                    Process.Start(psi);
-                    (App.MainWindow as MainWindow)?.ShowInfo("命令已以管理员模式提交，输出显示在弹出的管理员命令窗口中。");
+                    proc = Process.Start(psi);
                 }
                 catch (System.ComponentModel.Win32Exception)
                 {
-                    AppendLog("用户取消了 UAC 或管理员启动被拒绝。");
-                    (App.MainWindow as MainWindow)?.ShowError("管理员启动被取消或拒绝。");
+                    AppendLog("用户拒绝 UAC 或无法提升权限");
+                    (App.MainWindow as MainWindow)?.ShowError("请求管理员权限被拒绝或无法获取");
+                    return;
+                }
+
+                if (proc == null)
+                {
+                    (App.MainWindow as MainWindow)?.ShowError("无法启动提升的命令进程");
+                    return;
+                }
+
+                // Wait for process to exit with a reasonable timeout (2 minutes)
+                var exited = proc.WaitForExit(120000);
+                if (!exited)
+                {
+                    try { proc.Kill(entireProcessTree: true); } catch { }
+                    AppendLog("提升进程超时并已被终止");
+                    (App.MainWindow as MainWindow)?.ShowWarning("ViveTool 执行超时");
+                }
+
+                string output = string.Empty;
+                try { if (File.Exists(outFile)) output = await File.ReadAllTextAsync(outFile); } catch { }
+
+                AppendLog($"vivetool 输出:\n{output}");
+
+                var exitCode = proc.HasExited ? proc.ExitCode : -1;
+                AppendLog($"提升进程退出码: {exitCode}");
+
+                var success = IsExecutionSuccessful(exitCode, output ?? string.Empty, string.Empty);
+
+                // Verification for /enable|/disable|/reset when IDs provided
+                try
+                {
+                    var verbMatch = System.Text.RegularExpressions.Regex.Match(vivetoolArguments, "^\\/(enable|disable|reset)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    var idMatch = System.Text.RegularExpressions.Regex.Match(vivetoolArguments, "/id:([0-9,]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+                    if (verbMatch.Success && idMatch.Success)
+                    {
+                        var verb = verbMatch.Groups[1].Value.ToLowerInvariant();
+                        var ids = idMatch.Groups[1].Value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        var combinedLower = (output ?? string.Empty).ToLowerInvariant();
+
+                        // Early failure detection
+                        if (combinedLower.Contains("unable to parse feature id") || combinedLower.Contains("no features were specified"))
+                        {
+                            success = false;
+                            (App.MainWindow as MainWindow)?.ShowError("ViveTool 返回解析错误或未指定 Feature ID，请检查输入。");
+                        }
+                        else
+                        {
+                            var marker = "----QUERY-RESULTS----";
+                            var idx = combinedLower.IndexOf(marker);
+                            var queryOutput = idx >= 0 ? combinedLower.Substring(idx + marker.Length) : combinedLower;
+                            if (queryOutput.Length > 200_000) queryOutput = queryOutput.Substring(queryOutput.Length - 200_000);
+
+                            var failed = new List<string>();
+                            foreach (var featureId in ids)
+                            {
+                                var idTrim = featureId.Trim();
+                                if (string.IsNullOrEmpty(idTrim)) continue;
+
+                                var bracket = "[" + idTrim + "]";
+                                var pos = queryOutput.IndexOf(bracket, StringComparison.OrdinalIgnoreCase);
+                                var ok = false;
+                                if (pos >= 0)
+                                {
+                                    var windowStart = pos;
+                                    var windowLen = Math.Min(400, queryOutput.Length - windowStart);
+                                    var snippet = queryOutput.Substring(windowStart, windowLen);
+                                    // look for 'state' line nearby
+                                    if (snippet.Contains("state") && snippet.Contains("enabled") && verb == "enable") ok = true;
+                                    if (snippet.Contains("state") && snippet.Contains("disabled") && verb == "disable") ok = true;
+                                    if (verb == "reset" && snippet.Contains("state") && !snippet.Contains("enabled")) ok = true;
+                                }
+
+                                if (!ok) failed.Add(idTrim);
+                            }
+
+                          if (failed.Count > 0)
+                          {
+                              success = false;
+                              (App.MainWindow as MainWindow)?.ShowError($"部分 Feature 未按预期应用: {string.Join(',', failed)}。请检查输出并重试。");
+                          }
+                        }
+                    }
+                }
+                catch { }
+
+                if (success)
+                {
+                    (App.MainWindow as MainWindow)?.ShowSuccess("命令执行成功");
+                }
+                else
+                {
+                    (App.MainWindow as MainWindow)?.ShowError("命令执行失败，详情见输出。");
+                }
+
+                // If command included reboot flag, notify user that system will restart when vivetool triggers it.
+                if (vivetoolArguments.IndexOf("/reboot", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    (App.MainWindow as MainWindow)?.ShowInfo("包含 /reboot 参数；系统将在命令执行后按 vivetool 的行为重启（若需要）。");
+                }
+
+                // cleanup temp files or keep for debugging if empty output
+                if (string.IsNullOrWhiteSpace(output))
+                {
+                    AppendLog($"未捕获到 vivetool 输出，保留临时文件: {batFile}, {outFile}");
+                    (App.MainWindow as MainWindow)?.ShowWarning("未捕获到 vivetool 输出，已保留临时输出文件以便排查（查看日志）。");
+                }
+                else
+                {
+                    try { if (File.Exists(batFile)) File.Delete(batFile); } catch { }
+                    try { if (File.Exists(outFile)) File.Delete(outFile); } catch { }
                 }
             }
             catch (Exception ex)
             {
-                AppendLog($"启动失败：{ex.Message}");
-                (App.MainWindow as MainWindow)?.ShowError($"启动失败：{ex.Message}");
+                AppendLog($"执行失败: {ex.Message}");
+                (App.MainWindow as MainWindow)?.ShowError("执行失败: " + ex.Message);
             }
             finally
             {
@@ -299,8 +453,6 @@ namespace ViveToolWinUI.Pages
             btnRunCustom.IsEnabled = !running;
             btnOpenOutputPage.IsEnabled = !running && s_logBuffer.Length > 0;
         }
-
-        
 
         private void OpenOutputPage_Click(object sender, RoutedEventArgs e)
         {
