@@ -1,106 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
-  <resheader name="version"><value>2.0</value></resheader>
-  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value></resheader>
-  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value></resheader>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value>
+	</resheader>
 
-  <!-- ViveTool page / action area -->
-  <data name="PageTitle.Text" xml:space="preserve"><value>ViveTool Actions</value></data>
-  <data name="ActionTitle.Text" xml:space="preserve"><value>Action</value></data>
+	<!-- ViveTool Page / Action Area -->
+	<data name="PageTitle.Text" xml:space="preserve"><value>ViveTool Operations</value></data>
+	<data name="ActionTitle.Text" xml:space="preserve"><value>Action</value></data>
 
-  <!-- ComboBox items (ComboBoxItem uses .Content) -->
-  <data name="ActionEnable.Content" xml:space="preserve"><value>Enable</value></data>
-  <data name="ActionDisable.Content" xml:space="preserve"><value>Disable</value></data>
-  <data name="ActionReset.Content" xml:space="preserve"><value>Reset</value></data>
+	<!-- ComboBox Items -->
+	<data name="ActionEnable.Content" xml:space="preserve"><value>Enable</value></data>
+	<data name="ActionDisable.Content" xml:space="preserve"><value>Disable</value></data>
+	<data name="ActionReset.Content" xml:space="preserve"><value>Reset</value></data>
 
-  <data name="FeatureIdLabel.Text" xml:space="preserve"><value>Feature ID</value></data>
-  <data name="FeatureIdBox.PlaceholderText" xml:space="preserve"><value>e.g. 39281392, support multiple IDs separated by comma</value></data>
+	<data name="FeatureIdLabel.Text" xml:space="preserve"><value>Feature ID</value></data>
+	<data name="FeatureIdBox.PlaceholderText" xml:space="preserve"><value>e.g. 39281392, supports comma-separated multiple IDs</value></data>
 
-  <data name="OptionalParamsLabel.Text" xml:space="preserve"><value>Optional parameters</value></data>
-  <data name="AutoReboot.Content" xml:space="preserve"><value>Auto reboot</value></data>
-  <data name="VerboseOutput.Content" xml:space="preserve"><value>Verbose output</value></data>
+	<data name="OptionalParamsLabel.Text" xml:space="preserve"><value>Optional Parameters</value></data>
+	<data name="AutoReboot.Content" xml:space="preserve"><value>Auto Restart</value></data>
+	<data name="VerboseOutput.Content" xml:space="preserve"><value>Verbose Output</value></data>
 
-  <data name="RunButton.Content" xml:space="preserve"><value>Run</value></data>
+	<data name="RunButton.Content" xml:space="preserve"><value>Execute</value></data>
+	<data name="QuickCmdTitle.Text" xml:space="preserve"><value>Quick Commands</value></data>
+	<data name="CustomArgsLabel.Text" xml:space="preserve"><value>Custom Parameters</value></data>
+	<data name="CustomArgsBox.PlaceholderText" xml:space="preserve"><value>e.g. /enable /id:39281392 or /query</value></data>
+	<data name="RunCustomButton.Content" xml:space="preserve"><value>Execute Custom</value></data>
+	<data name="OpenOutputPageButton.Content" xml:space="preserve"><value>View Full Output</value></data>
+	<data name="RecentActionsLabel.Text" xml:space="preserve"><value>Recent Actions</value></data>
 
-  <data name="QuickCmdTitle.Text" xml:space="preserve"><value>Quick Commands</value></data>
+	<!-- SettingsPage Group Titles -->
+	<data name="AppearanceGroup.Text" xml:space="preserve"><value>Appearance &amp; Material</value></data>
+	<data name="BehaviorGroup.Text" xml:space="preserve"><value>Behavior</value></data>
+	<data name="AboutGroup.Text" xml:space="preserve"><value>About</value></data>
 
-  <!-- Preset buttons (commands left as content strings) -->
-  <data name="Preset_Query.Content" xml:space="preserve"><value>/query</value></data>
-  <data name="Preset_FullReset.Content" xml:space="preserve"><value>/fullreset</value></data>
-  <data name="Preset_ChangeStamp.Content" xml:space="preserve"><value>/changestamp</value></data>
+	<!-- Theme Settings -->
+	<data name="ThemeHeaderTitle.Text" xml:space="preserve"><value>Theme</value></data>
+	<data name="ThemeHeaderSubtitle.Text" xml:space="preserve"><value>Choose application theme</value></data>
+	<data name="ThemeSystem.Content" xml:space="preserve"><value>Follow System</value></data>
+	<data name="ThemeLight.Content" xml:space="preserve"><value>Light</value></data>
+	<data name="ThemeDark.Content" xml:space="preserve"><value>Dark</value></data>
 
-  <data name="Preset_QuerySubs.Content" xml:space="preserve"><value>/querysubs</value></data>
-  <data name="Preset_AddSub.Content" xml:space="preserve"><value>/addsub</value></data>
-  <data name="Preset_DelSub.Content" xml:space="preserve"><value>/delsub</value></data>
+	<!-- Material Settings -->
+	<data name="MaterialHeaderTitle.Text" xml:space="preserve"><value>Background Material</value></data>
+	<data name="MaterialHeaderSubtitle.Text" xml:space="preserve"><value>Choose application material</value></data>
+	<data name="MaterialAcrylic.Content" xml:space="preserve"><value>Acrylic</value></data>
+	<data name="MaterialMica.Content" xml:space="preserve"><value>Mica</value></data>
+	<data name="MaterialMicaAlt.Content" xml:space="preserve"><value>Mica Alt</value></data>
 
-  <data name="Preset_NotifyUsage.Content" xml:space="preserve"><value>/notifyusage</value></data>
-  <data name="Preset_Export.Content" xml:space="preserve"><value>/export</value></data>
-  <data name="Preset_Import.Content" xml:space="preserve"><value>/import</value></data>
+	<!-- Kernel Management -->
+	<data name="KernelHeaderTitle.Text" xml:space="preserve"><value>Kernel Management</value></data>
+	<data name="KernelHeaderSubtitle.Text" xml:space="preserve"><value>Check updates / Custom link / Import zip</value></data>
 
-  <data name="Preset_LkgStatus.Content" xml:space="preserve"><value>/lkgstatus</value></data>
-  <data name="Preset_FixLkg.Content" xml:space="preserve"><value>/fixlkg</value></data>
-  <data name="Preset_FixPriority.Content" xml:space="preserve"><value>/fixpriority</value></data>
+	<data name="BtnCheckViveToolUpdate.Content" xml:space="preserve"><value>Check Update</value></data>
+	<data name="BtnCustomUpdateLink.Content" xml:space="preserve"><value>Custom Update Link</value></data>
+	<data name="BtnImportKernelZip.Content" xml:space="preserve"><value>Import Kernel Zip</value></data>
+	<data name="BtnOpenCoreFolder.Content" xml:space="preserve"><value>Open Kernel Folder</value></data>
+	<data name="BtnBackupCore.Content" xml:space="preserve"><value>Backup Kernel to Desktop</value></data>
+	<data name="BtnRestoreCore.Content" xml:space="preserve"><value>Restore from Backup</value></data>
 
-  <data name="Preset_AppUpdate.Content" xml:space="preserve"><value>/appupdate</value></data>
-  <data name="Preset_DictUpdate.Content" xml:space="preserve"><value>/dictupdate</value></data>
-  <data name="Preset_Version.Content" xml:space="preserve"><value>/version</value></data>
+	<data name="BtnExportSettings.Content" xml:space="preserve"><value>Export Settings (.json)</value></data>
+	<data name="BtnImportSettings.Content" xml:space="preserve"><value>Import Settings (.json)</value></data>
+	<data name="BtnResetSettings.Content" xml:space="preserve"><value>Reset Settings</value></data>
+	<data name="BtnTestViveTool.Content" xml:space="preserve"><value>Diagnose: vivetool /version</value></data>
 
-  <data name="Preset_Install.Content" xml:space="preserve"><value>/install</value></data>
-  <data name="Preset_Uninstall.Content" xml:space="preserve"><value>/uninstall</value></data>
-  <data name="Preset_Help.Content" xml:space="preserve"><value>/help</value></data>
+	<!-- ToggleSwitch -->
+	<data name="AutoUpdateViveToolToggle.Header" xml:space="preserve"><value>Auto Update ViveTool Kernel</value></data>
 
-  <data name="Preset_Apply.Content" xml:space="preserve"><value>/apply</value></data>
-  <data name="Preset_Rollback.Content" xml:space="preserve"><value>/rollback</value></data>
-  <data name="Preset_QueryFormat.Content" xml:space="preserve"><value>/query-format</value></data>
+	<!-- About Panel -->
+	<data name="AboutTitle.Text" xml:space="preserve"><value>About</value></data>
+	<data name="AppTitle.Text" xml:space="preserve"><value>ViveTool WinUI</value></data>
+	<data name="AppPublisher.Text" xml:space="preserve"><value>Provided by YourPublisherName</value></data>
+	<data name="AppVersion.Text" xml:space="preserve"><value>Version {0}</value></data>
 
-  <!-- SettingsPage (appearance / behavior / about) -->
-  <data name="AppearanceGroup.Text" xml:space="preserve"><value>Appearance &amp; Material</value></data>
-  <data name="BehaviorGroup.Text" xml:space="preserve"><value>Behavior</value></data>
-  <data name="AboutGroup.Text" xml:space="preserve"><value>About</value></data>
+	<data name="JoinQQButton.Content" xml:space="preserve"><value>Join QQ Group</value></data>
+	<data name="JoinDiscordButton.Content" xml:space="preserve"><value>Join Discord</value></data>
+	<data name="FeedbackButton.Content" xml:space="preserve"><value>Send Feedback</value></data>
 
-  <!-- Theme expander -->
-  <data name="ThemeHeader.Title.Text" xml:space="preserve"><value>App theme</value></data>
-  <data name="ThemeHeader.Subtitle.Text" xml:space="preserve"><value>Choose app theme</value></data>
-  <data name="ThemeSystem.Text" xml:space="preserve"><value>Follow system</value></data>
-  <data name="ThemeLight.Text" xml:space="preserve"><value>Light</value></data>
-  <data name="ThemeDark.Text" xml:space="preserve"><value>Dark</value></data>
+	<!-- Helper Descriptions -->
+	<data name="AppearanceSubheader.Text" xml:space="preserve"><value>Appearance Settings</value></data>
+	<data name="BehaviorSubheader.Text" xml:space="preserve"><value>Behavior &amp; Kernel</value></data>
+	<data name="AboutSubheader.Text" xml:space="preserve"><value>App Info &amp; Support</value></data>
 
-  <!-- Material expander -->
-  <data name="MaterialHeader.Title.Text" xml:space="preserve"><value>Background material</value></data>
-  <data name="MaterialHeader.Subtitle.Text" xml:space="preserve"><value>Choose background material</value></data>
+	<!-- Dialogs -->
+	<data name="ClearHistoryButton.Content" xml:space="preserve"><value>Delete All</value></data>
+	<data name="ClearHistoryDialog.Title" xml:space="preserve"><value>Confirm Delete</value></data>
+	<data name="ClearHistoryDialog.Content" xml:space="preserve"><value>Clear recent actions list?</value></data>
+	<data name="ClearHistoryDialog.PrimaryButtonText" xml:space="preserve"><value>Delete</value></data>
+	<data name="ClearHistoryDialog.CloseButtonText" xml:space="preserve"><value>Cancel</value></data>
 
-  <!-- Kernel management -->
-  <data name="KernelHeader.Title.Text" xml:space="preserve"><value>Kernel management</value></data>
-  <data name="KernelHeader.Subtitle.Text" xml:space="preserve"><value>Check updates / Custom link / Import zip</value></data>
+	<!-- Context Menu -->
+	<data name="HistoryMenu.Enable.Text" xml:space="preserve"><value>Enable This ID</value></data>
+	<data name="HistoryMenu.Disable.Text" xml:space="preserve"><value>Disable This ID</value></data>
+	<data name="HistoryMenu.Reset.Text" xml:space="preserve"><value>Reset</value></data>
+	<data name="HistoryMenu.Delete.Text" xml:space="preserve"><value>Delete This Record</value></data>
 
-  <data name="BtnCheckViveToolUpdate.Text" xml:space="preserve"><value>Check for updates</value></data>
-  <data name="BtnCustomUpdateLink.Text" xml:space="preserve"><value>Custom update link</value></data>
-  <data name="BtnImportKernelZip.Text" xml:space="preserve"><value>Import kernel Zip</value></data>
-  <data name="BtnOpenCoreFolder.Text" xml:space="preserve"><value>Open core folder</value></data>
-  <data name="BtnBackupCore.Text" xml:space="preserve"><value>Backup core to Desktop</value></data>
-  <data name="BtnRestoreCore.Text" xml:space="preserve"><value>Restore from backup</value></data>
+	<!-- Input Dialogs - addsub -->
+	<data name="AddSubTitle" xml:space="preserve"><value>addsub Parameters</value></data>
+	<data name="AddSubMessage" xml:space="preserve"><value>Enter addsub parameters (e.g.: /id:12345 /user:...)</value></data>
 
-  <data name="BtnExportSettings.Text" xml:space="preserve"><value>Export settings (.json)</value></data>
-  <data name="BtnImportSettings.Text" xml:space="preserve"><value>Import settings (.json)</value></data>
-  <data name="BtnResetSettings.Text" xml:space="preserve"><value>Reset settings</value></data>
+	<!-- Input Dialogs - delsub -->
+	<data name="DelSubTitle" xml:space="preserve"><value>delsub Parameters</value></data>
+	<data name="DelSubMessage" xml:space="preserve"><value>Enter delsub parameters (e.g.: /id:12345 /user:...)</value></data>
 
-  <data name="BtnTestViveTool.Text" xml:space="preserve"><value>Diagnostics: vivetool /version</value></data>
+	<!-- Input Dialogs - notifyusage -->
+	<data name="NotifyUsageTitle" xml:space="preserve"><value>notifyusage Parameters</value></data>
+	<data name="NotifyUsageMessage" xml:space="preserve"><value>Enter notifyusage parameters (e.g.: /id:12345 /usage:1)</value></data>
 
-  <data name="AutoUpdateViveToolToggleHeader.Text" xml:space="preserve"><value>Auto-update ViveTool kernel</value></data>
+	<!-- Input Dialogs - export -->
+	<data name="ExportTitle" xml:space="preserve"><value>export Parameters</value></data>
+	<data name="ExportMessage" xml:space="preserve"><value>Optional: Output file path or leave empty (will generate in current directory)</value></data>
 
-  <!-- About header and content -->
-  <data name="AboutTitle.Text" xml:space="preserve"><value>About</value></data>
-  <data name="AppTitle.Text" xml:space="preserve"><value>ViveTool</value></data>
-  <data name="AppPublisher.Text" xml:space="preserve"><value>by YourPublisherName</value></data>
-  <data name="AppVersion.Text" xml:space="preserve"><value>Version {0}</value></data>
+	<!-- Input Dialogs - import -->
+	<data name="ImportTitle" xml:space="preserve"><value>import Parameters</value></data>
+	<data name="ImportMessage" xml:space="preserve"><value>Enter the file path to import (required)</value></data>
 
-  <data name="JoinQQButton.Text" xml:space="preserve"><value>Join QQ Group</value></data>
-  <data name="JoinDiscordButton.Text" xml:space="preserve"><value>Join Discord</value></data>
-  <data name="FeedbackButton.Text" xml:space="preserve"><value>Send feedback</value></data>
+	<!-- Common Dialog Buttons -->
+	<data name="DialogOK" xml:space="preserve"><value>OK</value></data>
+	<data name="DialogCancel" xml:space="preserve"><value>Cancel</value></data>
 
-  <!-- extra helpers -->
-  <data name="AppearanceSubheader.Text" xml:space="preserve"><value>Appearance settings</value></data>
-  <data name="BehaviorSubheader.Text" xml:space="preserve"><value>Behavior &amp; kernel</value></data>
-  <data name="AboutSubheader.Text" xml:space="preserve"><value>App info &amp; support</value></data>
+	<!-- Reboot Dialog -->
+	<data name="RebootTitle" xml:space="preserve"><value>Restart System</value></data>
+	<data name="RebootMessage" xml:space="preserve"><value>Command executed successfully. Restart system now to apply changes?</value></data>
+	<data name="RebootNow" xml:space="preserve"><value>Restart Now</value></data>
+	<data name="RebootLater" xml:space="preserve"><value>Restart Later</value></data>
+
+	<!-- Messages & Notifications -->
+	<data name="WarningEmptyFeatureId" xml:space="preserve"><value>Please enter Feature ID</value></data>
+	<data name="ErrorInvalidFeatureId" xml:space="preserve"><value>Invalid Feature ID format</value></data>
+	<data name="ErrorTooManyIds" xml:space="preserve"><value>Too many Feature IDs specified</value></data>
+	<data name="ErrorIdLength" xml:space="preserve"><value>Each Feature ID should be 8 digits (e.g. 56848060)</value></data>
+	<data name="WarningEmptyArgs" xml:space="preserve"><value>Please enter parameters</value></data>
+	<data name="ErrorViveToolNotFound" xml:space="preserve"><value>ViveTool not found</value></data>
+	<data name="ErrorUACDenied" xml:space="preserve"><value>Administrator privilege request denied or cannot be obtained</value></data>
+	<data name="ErrorProcessStart" xml:space="preserve"><value>Cannot start elevated command process</value></data>
+	<data name="ErrorTimeout" xml:space="preserve"><value>ViveTool execution timeout</value></data>
+	<data name="ErrorParseFeatureId" xml:space="preserve"><value>ViveTool returned parse error or no Feature ID specified. Please check your input.</value></data>
+	<data name="ErrorPartialFailed" xml:space="preserve"><value>Some Features were not applied as expected: {0}. Please check the output and retry.</value></data>
+	<data name="SuccessExecution" xml:space="preserve"><value>Command executed successfully</value></data>
+	<data name="ErrorExecutionFailed" xml:space="preserve"><value>Command execution failed. See output for details.</value></data>
+	<data name="ErrorNoOutput" xml:space="preserve"><value>No vivetool output captured. Temporary output files preserved for debugging (see logs).</value></data>
+	<data name="ErrorExecution" xml:space="preserve"><value>Execution failed: {0}</value></data>
+	<data name="InfoRebootScheduled" xml:space="preserve"><value>System will restart in 10 seconds</value></data>
+	<data name="ErrorRebootFailed" xml:space="preserve"><value>Cannot restart system: {0}</value></data>
+	<data name="InfoRebootIncluded" xml:space="preserve"><value>/reboot parameter included; system will restart after command execution as vivetool determines (if needed).</value></data>
+
+	<!-- Status Messages -->
+	<data name="StatusProcessing" xml:space="preserve"><value>Executing in admin mode...</value></data>
+	<data name="StatusReady" xml:space="preserve"><value>Ready</value></data>
+	<data name="LogUACDenied" xml:space="preserve"><value>User denied UAC or cannot elevate privileges</value></data>
 </root>

@@ -14,12 +14,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Graphics;
 using Windows.Storage;
+using Windows.System;
 
 namespace ViveToolWinUI
 {
@@ -37,7 +41,7 @@ namespace ViveToolWinUI
         [DllImport("user32.dll")]
         private static extern uint GetDpiForWindow(IntPtr hwnd);
 
-        // Win32 ���໯
+        // Win32 回调
         private delegate IntPtr WndProcDelegate(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
         private WndProcDelegate? _newWndProc;
         private IntPtr _oldWndProc;
@@ -45,7 +49,6 @@ namespace ViveToolWinUI
         private const int WM_GETMINMAXINFO = 0x0024;
 
         [StructLayout(LayoutKind.Sequential)]
-
         private struct POINT { public int x; public int y; }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -60,11 +63,11 @@ namespace ViveToolWinUI
 
         private bool _pendingDragUpdate = false;
 
-        // InfoBar / Toast fields (�ϲ�����һ��Ӧ�õ�ʵ�ַ��)
+        // InfoBar / Toast fields (保留原有逻辑)
         private Microsoft.UI.Dispatching.DispatcherQueueTimer? _infoTimer;
         public enum InfoBarSeverity { Informational = 0, Success = 1, Warning = 2, Error = 3 }
 
-        // Ϊ�˱�����ܵ� replace-last ���壬����һ���� pending �����ֶΣ��ɿ����ã�
+        // 保留原有 PendingInfoBarRequest 和 _pendingInfoBarRequest
         private volatile PendingInfoBarRequest? _pendingInfoBarRequest = null;
         private class PendingInfoBarRequest
         {
@@ -73,7 +76,7 @@ namespace ViveToolWinUI
             public InfoBarSeverity Severity { get; set; } = InfoBarSeverity.Informational;
         }
 
-        // �����Ը������ٸ�Ϊ�����ӵĴ���ѭ�������滻���׼��߼�
+        // 保留原有 _runningStoryboard
         private Storyboard? _runningStoryboard = null;
 
         public MainWindow()
@@ -84,7 +87,7 @@ namespace ViveToolWinUI
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
             _appWindow = AppWindow.GetFromWindowId(windowId)!;
 
-            try { _appWindow.ResizeClient(new SizeInt32(1100, 720)); }
+            try { _appWindow.Resize(new SizeInt32(1100, 720)); }
             catch { _appWindow.Resize(new SizeInt32(1100, 720)); }
 
             ExtendsContentIntoTitleBar = true;
@@ -106,24 +109,45 @@ namespace ViveToolWinUI
 
             SubclassWindowForMinSize(hwnd);
 
-            _ = MaybeAutoUpdateViveToolAsync();
+            // 应用首次启动时，强制复制一次
+            EnsureViveToolInstalled();
+
+            // 自动更新逻辑
+            var auto = (bool?)(ApplicationData.Current.LocalSettings.Values["AutoUpdateViveTool"]) ?? true;
+            if (auto)
+            {
+                // 静默后台检测：只有发现新版本时才弹窗提示
+                DispatcherQueue.TryEnqueue(async () =>
+                {
+                    try
+                    {
+                        await CheckAndPromptViveToolUpdateAsync(silent: true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine("Auto-update silent check failed: " + ex);
+                    }
+                });
+            }
 
             NavView.SelectedItem = NavView.MenuItems[0];
 
             ApplyBackdropFromSettings();
             UpdateTitleBarButtonsForTheme((Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default);
 
-            // ��ʼ�� info timer (������һ��Ӧ�÷��)
-            _infoTimer = DispatcherQueue.GetForCurrentThread().CreateTimer();
-            _infoTimer.Interval = TimeSpan.FromSeconds(2);
-            _infoTimer.Tick += (_, __) =>
+            RootLayout.Loaded += (_, __) =>
             {
-                HideToast();
-                _infoTimer?.Stop();
+                _infoTimer = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread().CreateTimer();
+                _infoTimer.Interval = TimeSpan.FromSeconds(2);
+                _infoTimer.Tick += (s, ev) =>
+                {
+                    HideToast();
+                    _infoTimer?.Stop();
+                };
             };
         }
 
-        #region WM_GETMINMAXINFO ��С�ߴ磨�޻ص���
+        #region WM_GETMINMAXINFO 最小尺寸回调
         private void SubclassWindowForMinSize(IntPtr hwnd)
         {
             _newWndProc = WndProc;
@@ -150,7 +174,7 @@ namespace ViveToolWinUI
         private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
         #endregion
 
-        #region ���� / Frame �߼�
+        #region 导航 / Frame 功能
         private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
@@ -194,9 +218,11 @@ namespace ViveToolWinUI
             }
             else if (e.SourcePageType == typeof(ViveToolWinUI.Pages.OutputPage))
             {
-                SelectNavItemByTag("Output");
+                // 不要高亮 Output，直接清掉
+                NavView.SelectedItem = null;
             }
         }
+
         private void SelectNavItemByTag(string tag)
         {
             foreach (var mi in NavView.MenuItems)
@@ -210,122 +236,185 @@ namespace ViveToolWinUI
         }
         #endregion
 
-        #region ViveTool �����߼�
-        // === �滻��������ԭ������ LocalFolder��ApplicationData.Current.LocalFolder��·��
-        private string GetLocalViveToolFolderPath()
+        #region ViveTool 路径与安装管理
+
+        // ===== 核心路径方法 =====
+
+        /// <summary>
+        /// 唯一的 ViveTool 可写目录：LocalState\ViveTool
+        /// </summary>
+        private string GetViveToolFolder()
         {
-            // ����ԭ����Ϊ������������ָ�� ApplicationData.Current.LocalFolder\ViveTool
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, ViveToolFolderName);
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, "ViveTool");
         }
 
-        // ��������ѡ����ִ�еĿ�дĿ¼��%LocalAppData%\ViveToolWinUI\ViveTool��
-        private string GetWritableLocalViveToolFolderPath()
+        /// <summary>
+        /// ViveTool.exe 的完整路径
+        /// </summary>
+        private string GetViveToolExePath()
         {
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ViveToolWinUI", "ViveTool");
+            return Path.Combine(GetViveToolFolder(), "ViveTool.exe");
         }
 
-
-        // === �滻���������ȼ������ȿ�д LocalAppData����� ApplicationData.Current.LocalFolder�������� Assets
-        public string GetEffectiveViveToolFolder()
+        /// <summary>
+        /// Assets 中的 ViveTool 源目录（只读）
+        /// </summary>
+        private string GetAssetsViveToolFolder()
         {
-            // 1) ���ȼ�� LocalAppData �µĿ�дĿ¼�����ȣ�
-            var writable = GetWritableLocalViveToolFolderPath();
-            if (Directory.Exists(writable) && File.Exists(Path.Combine(writable, "ViveTool.exe")))
-                return writable;
-
-            // 2) ��μ�� ApplicationData.Current.LocalFolder����ԭ�е��Զ�����Ŀ�꣩
-            var local = GetLocalViveToolFolderPath();
-            if (Directory.Exists(local) && File.Exists(Path.Combine(local, "ViveTool.exe")))
-                return local;
-
-            // 3) ������˰��� Assets��ֻ����
             return Path.Combine(AppContext.BaseDirectory, "Assets", "ViveTool");
         }
 
-        // === �滻��Exe ·��Ҳ��֮����
-        public string GetEffectiveViveToolExePath() =>
-            Path.Combine(GetEffectiveViveToolFolder(), "ViveTool.exe");
+        // ===== 核心安装方法 =====
 
-
-        // === �滻�����Զ�����ǰȷ����ִ���Ѱ�װ����дĿ¼��fire-and-forget ��Ϊ�ȴ� Ensure��
-        private async Task MaybeAutoUpdateViveToolAsync()
+        /// <summary>
+        /// 确保 ViveTool 已从 Assets 复制到 LocalState
+        /// 如果目标目录为空或缺少 exe，强制重新复制
+        /// </summary>
+        public void EnsureViveToolInstalled()
         {
+            var destFolder = GetViveToolFolder();
+            var destExe = GetViveToolExePath();
+            var assetsFolder = GetAssetsViveToolFolder();
+
             try
             {
-                var localSettings = ApplicationData.Current.LocalSettings;
-                var auto = (bool?)(localSettings.Values["AutoUpdateViveTool"]) ?? true;
-                if (!auto) return;
-
-                // ȷ�����ؿ�ִ�д��ڣ��Ӱ��� LocalFolder ���Ƶ� LocalAppData��
-                await EnsureViveToolInstalledAsync();
-
-                await UpdateViveToolAsync();
-            }
-            catch { }
-        }
-
-        // ������� release �����ذ汾��ʶ������ "v0.3.3"����ʧ��ʱ���� null ����ַ���
-        public async Task<string?> UpdateViveToolAsync()
-        {
-            try
-            {
-                // �������Ĳֿ��滻���������ֶ�
-                var owner = "thebookisclosed";
-                var repo = "ViVe";
-
-                using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(20) };
-                http.DefaultRequestHeaders.UserAgent.ParseAdd("ViveToolWinUI-Updater");
-
-                var apiUrl = $"https://api.github.com/repos/{owner}/{repo}/releases/latest";
-                var json = await http.GetStringAsync(apiUrl);
-                using var doc = System.Text.Json.JsonDocument.Parse(json);
-                var root = doc.RootElement;
-
-                if (root.TryGetProperty("tag_name", out var tagEl))
+                // 检查目标是否完整
+                if (Directory.Exists(destFolder) && File.Exists(destExe))
                 {
-                    var tag = tagEl.GetString();
-                    // ���� tag���� SettingsPage ������ʾ�û���
-                    return tag;
+                    var fileCount = Directory.GetFiles(destFolder, "*", SearchOption.AllDirectories).Length;
+                    if (fileCount > 2) // 至少有 exe + dll
+                    {
+                        Debug.WriteLine($"[ViveTool] 已存在完整安装，跳过复制（{fileCount} 个文件）");
+                        return;
+                    }
                 }
 
-                return null;
+                Debug.WriteLine("[ViveTool] 目标目录不完整，开始从 Assets 复制");
+
+                // 检查 Assets 源目录
+                if (!Directory.Exists(assetsFolder))
+                {
+                    ShowError($"未找到 Assets\\ViveTool 文件夹，请确认打包时包含了该目录");
+                    Debug.WriteLine($"[ViveTool] Assets 路径不存在: {assetsFolder}");
+                    return;
+                }
+
+                var assetsExe = Path.Combine(assetsFolder, "ViveTool.exe");
+                if (!File.Exists(assetsExe))
+                {
+                    ShowError($"Assets\\ViveTool 中缺少 ViveTool.exe");
+                    Debug.WriteLine($"[ViveTool] Assets exe 不存在: {assetsExe}");
+                    return;
+                }
+
+                // 创建目标目录
+                Directory.CreateDirectory(destFolder);
+
+                // 清理旧文件
+                try
+                {
+                    foreach (var file in Directory.EnumerateFiles(destFolder))
+                    {
+                        try { File.Delete(file); } catch { }
+                    }
+                    foreach (var dir in Directory.EnumerateDirectories(destFolder))
+                    {
+                        try { Directory.Delete(dir, true); } catch { }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ViveTool] 清理旧文件失败: {ex.Message}");
+                }
+
+                // 递归复制所有文件
+                CopyDirectoryRecursive(assetsFolder, destFolder);
+
+                // 验证复制结果
+                if (!File.Exists(destExe))
+                {
+                    ShowError("复制失败：目标文件夹中缺少 ViveTool.exe");
+                    Debug.WriteLine($"[ViveTool] 复制后仍缺少 exe: {destExe}");
+                    return;
+                }
+
+                var copiedCount = Directory.GetFiles(destFolder, "*", SearchOption.AllDirectories).Length;
+                Debug.WriteLine($"[ViveTool] 复制完成，共 {copiedCount} 个文件");
             }
-            catch
+            catch (Exception ex)
             {
-                // ������ؿգ����÷�����ʾ������ʾ
-                return null;
+                Debug.WriteLine($"[ViveTool] 安装异常: {ex}");
             }
         }
-        // === �滻/��ǿ�����غ�д�� ApplicationData.Current.LocalFolder��������ԭ����Ϊ��
-        // ���������Ⳣ�԰� LocalFolder �����ݸ��Ƶ���д LocalAppData �Ա�ִ��/�ⲿ����
+
+        /// <summary>
+        /// 递归复制目录（简化版）
+        /// </summary>
+        private void CopyDirectoryRecursive(string sourceDir, string destDir)
+        {
+            Directory.CreateDirectory(destDir);
+
+            // 复制所有文件
+            foreach (var file in Directory.GetFiles(sourceDir))
+            {
+                var fileName = Path.GetFileName(file);
+                var destFile = Path.Combine(destDir, fileName);
+                try
+                {
+                    File.Copy(file, destFile, overwrite: true);
+                    Debug.WriteLine($"[ViveTool] 复制文件: {fileName}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ViveTool] 复制文件失败 {fileName}: {ex.Message}");
+                }
+            }
+
+            // 递归复制子目录
+            foreach (var subDir in Directory.GetDirectories(sourceDir))
+            {
+                var dirName = Path.GetFileName(subDir);
+                var destSubDir = Path.Combine(destDir, dirName);
+                CopyDirectoryRecursive(subDir, destSubDir);
+            }
+        }
+
+        #endregion
+        #region ViveTool 更新与执行
+
+        /// <summary>
+        /// 下载并导入 ViveTool（从网络更新）
+        /// </summary>
         public async Task DownloadAndImportViveToolAsync(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                this.DispatcherQueue.TryEnqueue(() => (App.MainWindow as MainWindow)?.ShowError("��������Ϊ��"));
+                ShowError("下载链接为空");
                 return;
             }
 
-            string tmpFolder = Path.Combine(Path.GetTempPath(), "ViveTool_Download_" + Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(tmpFolder);
-            string tmpZip = Path.Combine(tmpFolder, "ViveTool.zip");
+            var tempFolder = Path.Combine(Path.GetTempPath(), $"ViveTool_Download_{Guid.NewGuid():N}");
+            var tempZip = Path.Combine(tempFolder, "ViveTool.zip");
 
             try
             {
+                Directory.CreateDirectory(tempFolder);
+
+                // 下载
                 using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
-                using var resp = await http.GetAsync(url);
-                if (!resp.IsSuccessStatusCode)
+                var response = await http.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
                 {
-                    this.DispatcherQueue.TryEnqueue(() => (App.MainWindow as MainWindow)?.ShowError($"����ʧ�ܣ�{resp.StatusCode}"));
+                    ShowError($"下载失败: HTTP {response.StatusCode}");
                     return;
                 }
 
-                var bytes = await resp.Content.ReadAsByteArrayAsync();
-                await File.WriteAllBytesAsync(tmpZip, bytes);
+                var bytes = await response.Content.ReadAsByteArrayAsync();
+                await File.WriteAllBytesAsync(tempZip, bytes);
 
-                // ���������ںˣ�����ڣ�
-                var currentFolder = Path.Combine(ApplicationData.Current.LocalFolder.Path, "ViveTool");
-                if (Directory.Exists(currentFolder))
+                // 备份当前版本到桌面
+                var destFolder = GetViveToolFolder();
+                if (Directory.Exists(destFolder) && File.Exists(GetViveToolExePath()))
                 {
                     try
                     {
@@ -333,130 +422,482 @@ namespace ViveToolWinUI
                         var backupDir = Path.Combine(desktop, "ViveTool_Backups");
                         Directory.CreateDirectory(backupDir);
                         var backupPath = Path.Combine(backupDir, $"ViveTool_Backup_{DateTime.Now:yyyyMMdd_HHmmss}.zip");
-                        ZipFile.CreateFromDirectory(currentFolder, backupPath, CompressionLevel.Optimal, includeBaseDirectory: false);
+                        ZipFile.CreateFromDirectory(destFolder, backupPath, CompressionLevel.Optimal, false);
+                        Debug.WriteLine($"[ViveTool] 已备份到: {backupPath}");
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine("ViveTool backup failed, continuing replacement.");
+                        Debug.WriteLine($"[ViveTool] 备份失败: {ex.Message}");
                     }
                 }
 
-                // ����Ŀ��Ŀ¼����ѹ�� ApplicationData.Current.LocalFolder\ViveTool
-                var localFolder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("ViveTool", CreationCollisionOption.OpenIfExists);
-                var localPath = localFolder.Path;
-
-                try
+                // 清理目标目录
+                Directory.CreateDirectory(destFolder);
+                foreach (var file in Directory.EnumerateFiles(destFolder))
                 {
-                    foreach (var f in Directory.EnumerateFiles(localPath)) File.Delete(f);
-                    foreach (var d in Directory.EnumerateDirectories(localPath)) Directory.Delete(d, true);
+                    try { File.Delete(file); } catch { }
                 }
-                catch { /* ����������� */ }
-
-                ZipFile.ExtractToDirectory(tmpZip, localPath, overwriteFiles: true);
-                try { File.Delete(tmpZip); } catch { }
-
-                // У�� ViveTool.exe ����
-                var exePath = Path.Combine(localPath, "ViveTool.exe");
-                if (!File.Exists(exePath))
+                foreach (var dir in Directory.EnumerateDirectories(destFolder))
                 {
-                    this.DispatcherQueue.TryEnqueue(() => (App.MainWindow as MainWindow)?.ShowError("����ʧ�ܣ���ѹ��δ�ҵ� ViveTool.exe"));
-                    return;
+                    try { Directory.Delete(dir, true); } catch { }
                 }
 
-                // ���԰� LocalFolder �����ݸ��Ƶ� LocalAppData ��ִ��Ŀ¼�����ǣ����А��ⲿ CMD / ��Ȩִ��
-                try
+                // 解压到目标目录
+                ZipFile.ExtractToDirectory(tempZip, destFolder, overwriteFiles: true);
+
+                // 验证
+                if (File.Exists(GetViveToolExePath()))
                 {
-                    var writable = GetWritableLocalViveToolFolderPath();
-                    Directory.CreateDirectory(writable);
-
-                    foreach (var f in Directory.EnumerateFiles(localPath))
-                    {
-                        var name = Path.GetFileName(f);
-                        try { File.Copy(f, Path.Combine(writable, name), overwrite: true); }
-                        catch { /* ���Ե����ļ����ƴ��� */ }
-                    }
-                }
-                catch { /* ���Ը��ƴ��� */ }
-
-                this.DispatcherQueue.TryEnqueue(() => (App.MainWindow as MainWindow)?.ShowSuccess("ViveTool �ں��Ѹ��²����롣"));
-            }
-            catch (Exception ex)
-            {
-                this.DispatcherQueue.TryEnqueue(() => (App.MainWindow as MainWindow)?.ShowError("���ػ���ʧ�ܣ�" + ex.Message));
-            }
-            finally
-            {
-                try { if (File.Exists(tmpZip)) File.Delete(tmpZip); } catch { }
-                try { if (Directory.Exists(tmpFolder)) Directory.Delete(tmpFolder, recursive: true); } catch { }
-            }
-        }
-        // === ������ȷ����ִ���Ѹ��Ƶ� %LocalAppData%\ViveToolWinUI\ViveTool��ͬ���棩
-        public void EnsureViveToolInstalled()
-        {
-            try
-            {
-                var destDir = GetWritableLocalViveToolFolderPath();
-                Directory.CreateDirectory(destDir);
-                var destExe = Path.Combine(destDir, "ViveTool.exe");
-                if (File.Exists(destExe)) return;
-
-                // ���ȴ� ApplicationData.Current.LocalFolder�������ʱд���λ�ã�����
-                var appDataFolder = GetLocalViveToolFolderPath();
-                var srcExeInLocalFolder = Path.Combine(appDataFolder, "ViveTool.exe");
-                if (File.Exists(srcExeInLocalFolder))
-                {
-                    try
-                    {
-                        foreach (var f in Directory.EnumerateFiles(appDataFolder))
-                        {
-                            var name = Path.GetFileName(f);
-                            try { File.Copy(f, Path.Combine(destDir, name), overwrite: true); } catch { }
-                        }
-                        return;
-                    }
-                    catch { /* ���Բ����˵����ڸ��� */ }
-                }
-
-                // ���ˣ��Ӱ��� Assets ����
-                var packageDir = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "ViveTool");
-                var packageExe = Path.Combine(packageDir, "ViveTool.exe");
-                if (File.Exists(packageExe))
-                {
-                    try
-                    {
-                        foreach (var f in Directory.EnumerateFiles(packageDir))
-                        {
-                            var name = Path.GetFileName(f);
-                            try { File.Copy(f, Path.Combine(destDir, name), overwrite: true); } catch { }
-                        }
-                    }
-                    catch { System.Diagnostics.Debug.WriteLine("Copy from package failed."); }
+                    ShowSuccess("ViveTool 更新成功");
+                    Debug.WriteLine("[ViveTool] 更新完成");
                 }
                 else
                 {
-                    System.Diagnostics.Debug.WriteLine("ViveTool not found in package or local folder.");
+                    ShowError("更新失败：解压后未找到 ViveTool.exe");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("EnsureViveToolInstalled error: " + ex);
+                ShowError($"更新失败: {ex.Message}");
+                Debug.WriteLine($"[ViveTool] 更新异常: {ex}");
+            }
+            finally
+            {
+                // 清理临时文件
+                try
+                {
+                    if (File.Exists(tempZip)) File.Delete(tempZip);
+                    if (Directory.Exists(tempFolder)) Directory.Delete(tempFolder, true);
+                }
+                catch { }
             }
         }
 
-        // === �������첽�汾
-        public Task EnsureViveToolInstalledAsync() => Task.Run(() => EnsureViveToolInstalled());
+        /// <summary>
+        /// 检查并提示更新（调用 /appupdate 和 /dictupdate）
+        /// </summary>
+        public async Task CheckAndPromptViveToolUpdateAsync(bool silent = false)
+        {
+            try
+            {
+                // 保证已安装并能找到 exe
+                EnsureViveToolInstalled();
+                var exePath = GetViveToolExePath();
+                var workingDir = GetViveToolFolder();
 
-        // === �������Թ���ԱȨ����� ViveTool�������� stdout��UseShellExecute = true��
+                if (!File.Exists(exePath))
+                {
+                    if (!silent)
+                        ShowError("ViveTool 未安装，无法检查更新");
+                    return;
+                }
+
+                // 获取当前版本（可能是输出包含换行或额外信息）
+                var currentVersionOutput = await GetViveToolVersionAsync();
+                var currentMatch = System.Text.RegularExpressions.Regex.Match(currentVersionOutput, @"v?(\d+\.\d+\.\d+)");
+                string currentVer = currentMatch.Success ? currentMatch.Groups[1].Value : "0.0.0";
+
+                // 如果不是 silent 模式，显示初始“检测中”对话框；silent 模式下不创建任何 UI，直接后台检测
+                ContentDialog initialDialog = null;
+                Task<ContentDialogResult>? showTask = null;
+                if (!silent)
+                {
+                    var progressRing = new ProgressRing { IsActive = true, Width = 32, Height = 32 };
+                    var progressPanel = new StackPanel { Spacing = 12, HorizontalAlignment = HorizontalAlignment.Center };
+                    progressPanel.Children.Add(new TextBlock { Text = "正在检测更新...", HorizontalAlignment = HorizontalAlignment.Center });
+                    progressPanel.Children.Add(progressRing);
+
+                    initialDialog = new ContentDialog
+                    {
+                        Title = "检测更新",
+                        Content = progressPanel,
+                        CloseButtonText = "取消",
+                        XamlRoot = ContentFrame.XamlRoot
+                    };
+
+                    // 启动显示（但我们不 await 直到检测结果准备好更新内容）
+                    showTask = initialDialog.ShowAsync().AsTask();
+                }
+
+                // 后台执行检测（不阻塞 UI），复用你的 RunProcessCaptureAsync 调用
+                string combinedOutput = "";
+                try
+                {
+                    combinedOutput = await Task.Run(async () =>
+                    {
+                        var r = await RunProcessCaptureAsync(exePath, "/appupdate", workingDir, TimeSpan.FromSeconds(30), CancellationToken.None);
+                        return $"{r.Output}\n{r.Error}".Trim();
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Update check process failed: " + ex);
+                    if (!silent)
+                    {
+                        // 关闭初始对话框并报错
+                        try { initialDialog?.Hide(); } catch { }
+                        ShowError("检测更新失败");
+                    }
+                    return;
+                }
+
+                // 解析最新版本号
+                var latestMatch = System.Text.RegularExpressions.Regex.Match(combinedOutput, @"v?(\d+\.\d+\.\d+)");
+                string latestVer = latestMatch.Success ? latestMatch.Groups[1].Value : "";
+
+                bool hasUpdate = !string.IsNullOrEmpty(latestVer) &&
+                                 Version.TryParse(latestVer, out var latest) &&
+                                 Version.TryParse(currentVer, out var current) &&
+                                 latest > current;
+
+                if (silent)
+                {
+                    // 静默模式：只有在发现更新时才弹窗提示
+                    if (hasUpdate)
+                    {
+                        try
+                        {
+                            // 在 UI 线程显示提示并允许用户选择下载
+                            DispatcherQueue.TryEnqueue(async () =>
+                            {
+                                try
+                                {
+                                    var panel = new StackPanel { Spacing = 8 };
+                                    panel.Children.Add(new TextBlock
+                                    {
+                                        Text = $"当前版本：{currentVer}\n最新版本：{latestVer}\n检测到新版本可用！",
+                                        TextWrapping = TextWrapping.Wrap
+                                    });
+
+                                    var dialog = new ContentDialog
+                                    {
+                                        Title = "检测到可用更新",
+                                        Content = panel,
+                                        PrimaryButtonText = "下载并更新",
+                                        CloseButtonText = "稍后",
+                                        XamlRoot = ContentFrame.XamlRoot
+                                    };
+
+                                    var result = await dialog.ShowAsync();
+                                    if (result == ContentDialogResult.Primary)
+                                    {
+                                        await DownloadAndInstallUpdateAsync(dialog);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.WriteLine("Failed to prompt update found UI: " + ex);
+                                }
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("Failed to prompt update found UI: " + ex);
+                        }
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Auto-update silent check: no update (current={currentVer}, latest={latestVer})");
+                    }
+
+                    return;
+                }
+
+                // 非 silent（手动触发或原行为）：更新初始对话框内容并等待用户交互
+                // 如果初始对话框不存在（理论上不会），就创建一个新的
+                if (initialDialog == null)
+                {
+                    initialDialog = new ContentDialog
+                    {
+                        Title = "检测更新",
+                        Content = new TextBlock { Text = "正在检测更新...", HorizontalAlignment = HorizontalAlignment.Center },
+                        CloseButtonText = "取消",
+                        XamlRoot = ContentFrame.XamlRoot
+                    };
+                    showTask = initialDialog.ShowAsync().AsTask();
+                }
+
+                // 构建结果面板
+                var resultPanel = new StackPanel { Spacing = 8 };
+                resultPanel.Children.Add(new TextBlock
+                {
+                    Text = hasUpdate
+                        ? $"当前版本：{currentVer}\n最新版本：{latestVer}\n检测到新版本可用！"
+                        : $"当前版本：{currentVer}\n已是最新版本。",
+                    TextWrapping = TextWrapping.Wrap
+                });
+
+                // 更新对话框并设置按钮
+                try
+                {
+                    initialDialog.Content = resultPanel;
+                    initialDialog.PrimaryButtonText = hasUpdate ? "下载并更新" : null;
+                    initialDialog.CloseButtonText = hasUpdate ? "稍后" : "关闭";
+                }
+                catch { /* 忽略可能的 UI 更新异常 */ }
+
+                // 等待用户关闭初始对话框（如果用户在检测进行中就已关闭 it'll return）
+                if (showTask != null)
+                {
+                    var result = await showTask;
+                    if (result == ContentDialogResult.Primary && hasUpdate)
+                    {
+                        await DownloadAndInstallUpdateAsync(initialDialog);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"CheckAndPromptViveToolUpdateAsync failed: {ex}");
+                if (!silent) ShowError($"检查更新失败: {ex.Message}");
+            }
+        }
+        // 新增: 带进度的下载安装
+        private async Task DownloadAndInstallUpdateAsync(ContentDialog existingDialog)
+        {
+            var progressBar = new ProgressBar { IsIndeterminate = false, Value = 0, Width = 400 };
+            var statusText = new TextBlock { Text = "准备下载...", HorizontalAlignment = HorizontalAlignment.Center };
+            var progressPanel = new StackPanel { Spacing = 12 };
+            progressPanel.Children.Add(statusText);
+            progressPanel.Children.Add(progressBar);
+
+            existingDialog.Content = progressPanel;
+            existingDialog.Title = "正在下载更新";
+            existingDialog.PrimaryButtonText = null;
+            existingDialog.CloseButtonText = null;
+            existingDialog.IsPrimaryButtonEnabled = false;
+
+            try
+            {
+                var url = (ApplicationData.Current.LocalSettings.Values["CustomViveToolUpdateUrl"] as string)
+                          ?? "https://github.com/thebookisclosed/ViVe/releases/latest/download/ViveTool.zip";
+
+                var tempFolder = Path.Combine(Path.GetTempPath(), $"ViveTool_Download_{Guid.NewGuid():N}");
+                var tempZip = Path.Combine(tempFolder, "ViveTool.zip");
+                Directory.CreateDirectory(tempFolder);
+
+                // 下载并报告进度
+                using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
+                using var response = await http.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"HTTP {response.StatusCode}");
+                }
+
+                var totalBytes = response.Content.Headers.ContentLength ?? -1;
+                using var contentStream = await response.Content.ReadAsStreamAsync();
+                using var fileStream = new FileStream(tempZip, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true);
+
+                var buffer = new byte[8192];
+                long totalRead = 0;
+                int bytesRead;
+
+                while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    await fileStream.WriteAsync(buffer, 0, bytesRead);
+                    totalRead += bytesRead;
+
+                    if (totalBytes > 0)
+                    {
+                        var progress = (double)totalRead / totalBytes * 100;
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                            progressBar.Value = progress;
+                            statusText.Text = $"正在下载... {progress:F1}% ({totalRead / 1024}KB / {totalBytes / 1024}KB)";
+                        });
+                    }
+                }
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    statusText.Text = "正在安装...";
+                    progressBar.IsIndeterminate = true;
+                });
+
+                // 备份并替换
+                var destFolder = GetViveToolFolder();
+                if (Directory.Exists(destFolder) && File.Exists(GetViveToolExePath()))
+                {
+                    try
+                    {
+                        var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                        var backupDir = Path.Combine(desktop, "ViveTool_Backups");
+                        Directory.CreateDirectory(backupDir);
+                        var backupPath = Path.Combine(backupDir, $"ViveTool_Backup_{DateTime.Now:yyyyMMdd_HHmmss}.zip");
+                        ZipFile.CreateFromDirectory(destFolder, backupPath, CompressionLevel.Optimal, false);
+                    }
+                    catch { }
+                }
+
+                // 清理并解压
+                foreach (var file in Directory.EnumerateFiles(destFolder))
+                    try { File.Delete(file); } catch { }
+                foreach (var dir in Directory.EnumerateDirectories(destFolder))
+                    try { Directory.Delete(dir, true); } catch { }
+
+                ZipFile.ExtractToDirectory(tempZip, destFolder, overwriteFiles: true);
+
+                // 清理临时文件
+                try
+                {
+                    File.Delete(tempZip);
+                    Directory.Delete(tempFolder, true);
+                }
+                catch { }
+
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    existingDialog.Title = "更新完成";
+                    existingDialog.Content = new TextBlock
+                    {
+                        Text = "ViveTool 已成功更新到最新版本！",
+                        TextWrapping = TextWrapping.Wrap,
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    };
+                    existingDialog.CloseButtonText = "完成";
+                });
+
+                ShowSuccess("ViveTool 已更新到最新版本");
+            }
+            catch (Exception ex)
+            {
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    existingDialog.Title = "更新失败";
+                    existingDialog.Content = new TextBlock
+                    {
+                        Text = $"更新失败：{ex.Message}",
+                        TextWrapping = TextWrapping.Wrap
+                    };
+                    existingDialog.CloseButtonText = "关闭";
+                });
+                ShowError($"更新失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 获取 ViveTool 版本信息
+        /// </summary>
+        public async Task<string> GetViveToolVersionAsync()
+        {
+            try
+            {
+                EnsureViveToolInstalled();
+                var exePath = GetViveToolExePath();
+                var workingDir = GetViveToolFolder();
+
+                if (!File.Exists(exePath))
+                    return "未找到 ViveTool.exe";
+
+                var result = await RunProcessCaptureAsync(exePath, "/version", workingDir, TimeSpan.FromSeconds(20), CancellationToken.None);
+                return !string.IsNullOrEmpty(result.Output) ? result.Output : result.Error;
+            }
+            catch (Exception ex)
+            {
+                return $"获取版本失败: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// 打开 ViveTool 文件夹
+        /// </summary>
+        public async Task OpenViveToolFolderAsync()
+        {
+            try
+            {
+                EnsureViveToolInstalled();
+                var folder = GetViveToolFolder();
+
+                if (!Directory.Exists(folder))
+                {
+                    ShowWarning($"文件夹不存在: {folder}");
+                    return;
+                }
+
+                var success = await Launcher.LaunchFolderPathAsync(folder);
+                if (!success)
+                {
+                    // 降级：使用 explorer
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $"\"{folder}\"",
+                        UseShellExecute = true
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError($"打开文件夹失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 运行 ViveTool 并捕获输出（无提升权限）
+        /// </summary>
+        private Task<(string Output, string Error, int ExitCode)> RunProcessCaptureAsync(
+    string exePath, string arguments, string workingDir, TimeSpan timeout, CancellationToken ct)
+        {
+            return Task.Run(() =>
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    Arguments = arguments,
+                    WorkingDirectory = workingDir,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                    StandardOutputEncoding = Encoding.UTF8,
+                    StandardErrorEncoding = Encoding.UTF8
+                };
+
+                using var proc = Process.Start(psi) ?? throw new InvalidOperationException("无法启动进程");
+
+                // 修复：分开处理 timeout
+                bool exited;
+                if (timeout > TimeSpan.Zero)
+                {
+                    exited = proc.WaitForExit((int)timeout.TotalMilliseconds);
+                }
+                else
+                {
+                    proc.WaitForExit();
+                    exited = true;
+                }
+
+                if (!exited)
+                {
+                    try { proc.Kill(true); } catch { }
+                }
+
+                if (ct.IsCancellationRequested)
+                {
+                    try { if (!proc.HasExited) proc.Kill(true); } catch { }
+                    throw new OperationCanceledException();
+                }
+
+                return (proc.StandardOutput.ReadToEnd().Trim(),
+                        proc.StandardError.ReadToEnd().Trim(),
+                        proc.ExitCode);
+            }, ct);
+        }
+
+        #endregion
+
+        // 运行 ViveTool 带提升（保留原有）
         public Process? RunViveToolWithElevation(string arguments, bool waitForExit = true, int timeoutMs = 120000)
         {
             try
             {
                 EnsureViveToolInstalled();
 
-                var exePath = Path.Combine(GetWritableLocalViveToolFolderPath(), "ViveTool.exe");
+                var exePath = GetViveToolExePath(); // 修复：使用正确的方法
                 if (!File.Exists(exePath))
                 {
-                    ShowError("ViveTool �ں�δ�ҵ����޷�ִ�����");
+                    ShowError("ViveTool 内核缺失，无法执行");
                     return null;
                 }
 
@@ -472,7 +913,7 @@ namespace ViveToolWinUI
                 var proc = Process.Start(psi);
                 if (proc == null)
                 {
-                    ShowError("�޷���� ViveTool ���̡�");
+                    ShowError("无法启动 ViveTool");
                     return null;
                 }
 
@@ -480,42 +921,41 @@ namespace ViveToolWinUI
                 {
                     if (!proc.WaitForExit(timeoutMs))
                     {
-                        try { proc.Kill(); } catch { }
-                        ShowWarning("ViveTool ִ�г�ʱ������ֹ��");
+                        try { proc.Kill(entireProcessTree: true); } catch { }
+                        ShowWarning("ViveTool 执行超时，已终止");
                     }
                 }
 
                 return proc;
             }
-            catch (System.ComponentModel.Win32Exception ex) when ((uint)ex.NativeErrorCode == 1223) // ERROR_CANCELLED
+            catch (System.ComponentModel.Win32Exception ex) when ((uint)ex.NativeErrorCode == 1223)
             {
-                ShowWarning("��ȡ������Ա��Ȩ��");
+                ShowWarning("用户取消提升权限");
                 return null;
             }
             catch (Exception ex)
             {
-                ShowError("���� ViveTool ʧ�ܣ�" + ex.Message);
+                ShowError($"启动 ViveTool 失败: {ex.Message}");
                 return null;
             }
         }
 
-        // === �������Թ���ԱȨ��ִ�в������д����ʱ�ļ����ȡ���ʺ��� UI ����ʾ���������
+        // 运行 ViveTool 带提升并读取输出
         public async Task<string?> RunViveToolElevatedAndReadOutputAsync(string args, int timeoutMs = 120000)
         {
             try
             {
                 EnsureViveToolInstalled();
-                var exePath = Path.Combine(GetWritableLocalViveToolFolderPath(), "ViveTool.exe");
+                var exePath = GetViveToolExePath(); // 修复：使用正确的方法
                 if (!File.Exists(exePath))
                 {
-                    ShowError("ViveTool �ں�δ�ҵ����޷�ִ�����");
+                    ShowError("ViveTool 内核缺失，无法执行");
                     return null;
                 }
 
                 var tmpOut = Path.Combine(Path.GetTempPath(), $"vivetool_out_{Guid.NewGuid():N}.txt");
 
-                // ʹ�� cmd.exe /c "vivetool ... > tmpOut 2>&1" ��������ض����ļ�
-                var cmdArgs = $"/c \"\\\"{exePath}\\\" {args} > \\\"{tmpOut}\\\" 2>&1\"";
+                var cmdArgs = $"/c \"{exePath} {args} > \"{tmpOut}\" 2>&1\"";
 
                 var psi = new ProcessStartInfo
                 {
@@ -532,12 +972,12 @@ namespace ViveToolWinUI
                 if (!proc.WaitForExit(timeoutMs))
                 {
                     try { proc.Kill(); } catch { }
-                    ShowWarning("ViveTool ִ�г�ʱ��");
+                    ShowWarning("ViveTool 执行超时");
                 }
 
                 if (File.Exists(tmpOut))
                 {
-                    var txt = await File.ReadAllTextAsync(tmpOut);
+                    var txt = await File.ReadAllTextAsync(tmpOut, Encoding.UTF8);
                     try { File.Delete(tmpOut); } catch { }
                     return txt;
                 }
@@ -546,19 +986,17 @@ namespace ViveToolWinUI
             }
             catch (System.ComponentModel.Win32Exception ex) when ((uint)ex.NativeErrorCode == 1223)
             {
-                ShowWarning("��ȡ������Ա��Ȩ��");
+                ShowWarning("用户取消提升权限");
                 return null;
             }
             catch (Exception ex)
             {
-                ShowError("ִ��ʧ�ܣ�" + ex.Message);
+                ShowError($"执行 ViveTool 失败: {ex.Message}");
                 return null;
             }
         }
 
-        #endregion
-
-        #region ��������������
+        #region 背景与主题
         public void ApplyBackdropFromSettings()
         {
             var s = ApplicationData.Current.LocalSettings.Values;
@@ -661,7 +1099,7 @@ namespace ViveToolWinUI
         }
         #endregion
 
-        #region �������϶�����
+        #region TitleBar 拖拽区域
         private void EnsureDragRectsOnce()
         {
             if (AppTitleBar == null) return;
@@ -731,7 +1169,7 @@ namespace ViveToolWinUI
 
                     tb.SetDragRectangles(rects.ToArray());
                 }
-                catch (ObjectDisposedException) { System.Diagnostics.Debug.WriteLine("[TitleBar] ���ͷ�"); }
+                catch (ObjectDisposedException) { System.Diagnostics.Debug.WriteLine("[TitleBar] 窗口已关闭"); }
             });
         }
 
@@ -755,7 +1193,7 @@ namespace ViveToolWinUI
         }
         #endregion
 
-        #region InfoBar / Toast Ǩ������һ��Ӧ�� (����ʵ��)
+        #region InfoBar / Toast 提示
         public void ShowToast(string message, InfoBarSeverity severity = InfoBarSeverity.Informational)
         {
             DispatcherQueue.TryEnqueue(async () =>
@@ -847,7 +1285,7 @@ namespace ViveToolWinUI
         public void ShowInfo(string message) => ShowToast(message, InfoBarSeverity.Informational);
         #endregion
 
-        #region Dispatcher ���������������������첽 UI ���ã�
+        #region Dispatcher 队列 UI 回调
         private Task DispatcherQueueInvokeAsync(Func<Task> uiFunc)
         {
             if (DispatcherQueue.HasThreadAccess)
@@ -869,13 +1307,13 @@ namespace ViveToolWinUI
                 }
             });
 
-            if (!queued) tcs.TrySetException(new InvalidOperationException("�޷����������� UI DispatcherQueue��"));
+            if (!queued) tcs.TrySetException(new InvalidOperationException("无法访问 UI DispatcherQueue"));
             return tcs.Task;
         }
         #endregion
 
-        #region �� Splash ��ʾ/���أ����ǲ㷽����ʹ�ð���Դ�Զ�������
-        // ��ʾ�� Splash������λ�ã�App.OnLaunched �
+        #region Splash 启动屏显示/隐藏
+        // 启动时调用
         public void ShowSplashOverlay()
         {
             SplashOverlay.Visibility = Visibility.Visible;
@@ -890,11 +1328,11 @@ namespace ViveToolWinUI
             string scaleSuffix = dpi >= 288 ? "400" : dpi >= 192 ? "200" : "100";
             string imagePath = $"Assets/SplashScreen.scale-{scaleSuffix}.png";
 
-            SplashImage.Stretch = Stretch.Uniform; // ��֤������ʾ
+            SplashImage.Stretch = Stretch.Uniform; // 确保比例显示
             SplashImage.Source = new BitmapImage(new Uri($"ms-appx:///{imagePath}"));
         }
 
-        // ���� Splash��������������
+        // 隐藏时调用
         public void HideSplashOverlay()
         {
             var visual = ElementCompositionPreview.GetElementVisual(SplashOverlay);
@@ -905,7 +1343,7 @@ namespace ViveToolWinUI
             fadeAnimation.Duration = TimeSpan.FromMilliseconds(250);
 
             var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            visual.StartAnimation(nameof(visual.Opacity), fadeAnimation);
+            visual.StartAnimation("Opacity", fadeAnimation);
             batch.End();
 
             batch.Completed += (s, e) =>

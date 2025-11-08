@@ -5,6 +5,16 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:local="using:ViveToolWinUI.Pages">
 
+    <Page.Resources>
+        <!-- 放在 Page 根内的 Page.Resources 或 Page 直接元素里 -->
+        <ContentDialog x:Key="ClearHistoryDialog" x:Uid="ClearHistoryDialog">
+            <ContentDialog.Title>Confirm Delete</ContentDialog.Title>
+            <TextBlock>Do you want to clear the recent items?</TextBlock>
+            <ContentDialog.PrimaryButtonText>Delete</ContentDialog.PrimaryButtonText>
+            <ContentDialog.CloseButtonText>Cancel</ContentDialog.CloseButtonText>
+        </ContentDialog>
+    </Page.Resources>
+
     <!-- whole page scrollable -->
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Padding="16" Spacing="12">
@@ -54,15 +64,16 @@
 
             <!-- Quick commands area (kept untranslated per request) -->
             <Border Padding="12" CornerRadius="8"
-                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
-                    BorderThickness="1"
-                    Translation="0,0,16">
+        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+        BorderBrush="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+        BorderThickness="1"
+        Translation="0,0,16">
                 <Border.Shadow>
                     <ThemeShadow/>
                 </Border.Shadow>
 
                 <StackPanel Spacing="12">
+                    <!-- 标题仍然本地化 -->
                     <TextBlock x:Uid="QuickCmdTitle" FontWeight="SemiBold"/>
 
                     <Grid>
@@ -81,90 +92,103 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Row="0" Grid.Column="0" Margin="4" Click="Preset_Query_Click">
+                        <!-- 快捷指令按钮：保留 x:Name，不使用 x:Uid，直接写死 Text -->
+                        <Button x:Name="btnPresetQuery" Grid.Row="0" Grid.Column="0" Margin="4" Click="Preset_Query_Click">
                             <TextBlock Text="/query" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="0" Grid.Column="1" Margin="4" Click="Preset_FullReset_Click">
+                        <Button x:Name="btnPresetFullReset" Grid.Row="0" Grid.Column="1" Margin="4" Click="Preset_FullReset_Click">
                             <TextBlock Text="/fullreset" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="0" Grid.Column="2" Margin="4" Click="Preset_ChangeStamp_Click">
+                        <Button x:Name="btnPresetChangeStamp" Grid.Row="0" Grid.Column="2" Margin="4" Click="Preset_ChangeStamp_Click">
                             <TextBlock Text="/changestamp" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
 
-                        <Button Grid.Row="1" Grid.Column="0" Margin="4" Click="Preset_QuerySubs_Click">
+                        <Button x:Name="btnPresetQuerySubs" Grid.Row="1" Grid.Column="0" Margin="4" Click="Preset_QuerySubs_Click">
                             <TextBlock Text="/querysubs" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="1" Grid.Column="1" Margin="4" Click="Preset_AddSub_Click">
+                        <Button x:Name="btnPresetAddSub" Grid.Row="1" Grid.Column="1" Margin="4" Click="Preset_AddSub_Click">
                             <TextBlock Text="/addsub" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="1" Grid.Column="2" Margin="4" Click="Preset_DelSub_Click">
+                        <Button x:Name="btnPresetDelSub" Grid.Row="1" Grid.Column="2" Margin="4" Click="Preset_DelSub_Click">
                             <TextBlock Text="/delsub" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
 
-                        <Button Grid.Row="2" Grid.Column="0" Margin="4" Click="Preset_NotifyUsage_Click">
+                        <Button x:Name="btnPresetNotifyUsage" Grid.Row="2" Grid.Column="0" Margin="4" Click="Preset_NotifyUsage_Click">
                             <TextBlock Text="/notifyusage" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="2" Grid.Column="1" Margin="4" Click="Preset_Export_Click">
+                        <Button x:Name="btnPresetExport" Grid.Row="2" Grid.Column="1" Margin="4" Click="Preset_Export_Click">
                             <TextBlock Text="/export" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="2" Grid.Column="2" Margin="4" Click="Preset_Import_Click">
+                        <Button x:Name="btnPresetImport" Grid.Row="2" Grid.Column="2" Margin="4" Click="Preset_Import_Click">
                             <TextBlock Text="/import" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
 
-                        <Button Grid.Row="3" Grid.Column="0" Margin="4" Click="Preset_LkgStatus_Click">
+                        <Button x:Name="btnPresetLkgStatus" Grid.Row="3" Grid.Column="0" Margin="4" Click="Preset_LkgStatus_Click">
                             <TextBlock Text="/lkgstatus" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="3" Grid.Column="1" Margin="4" Click="Preset_FixLkg_Click">
+                        <Button x:Name="btnPresetFixLkg" Grid.Row="3" Grid.Column="1" Margin="4" Click="Preset_FixLkg_Click">
                             <TextBlock Text="/fixlkg" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="3" Grid.Column="2" Margin="4" Click="Preset_FixPriority_Click">
+                        <Button x:Name="btnPresetFixPriority" Grid.Row="3" Grid.Column="2" Margin="4" Click="Preset_FixPriority_Click">
                             <TextBlock Text="/fixpriority" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
 
-                        <Button Grid.Row="4" Grid.Column="0" Margin="4" Click="Preset_AppUpdate_Click">
+                        <Button x:Name="btnPresetAppUpdate" Grid.Row="4" Grid.Column="0" Margin="4" Click="Preset_AppUpdate_Click">
                             <TextBlock Text="/appupdate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="4" Grid.Column="1" Margin="4" Click="Preset_DictUpdate_Click">
+                        <Button x:Name="btnPresetDictUpdate" Grid.Row="4" Grid.Column="1" Margin="4" Click="Preset_DictUpdate_Click">
                             <TextBlock Text="/dictupdate" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="4" Grid.Column="2" Margin="4" Click="Preset_Version_Click">
+                        <Button x:Name="btnPresetVersion" Grid.Row="4" Grid.Column="2" Margin="4" Click="Preset_Version_Click">
                             <TextBlock Text="/version" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
 
-                        <Button Grid.Row="5" Grid.Column="0" Margin="4" Click="Preset_Install_Click">
+                        <Button x:Name="btnPresetInstall" Grid.Row="5" Grid.Column="0" Margin="4" Click="Preset_Install_Click">
                             <TextBlock Text="/install" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="5" Grid.Column="1" Margin="4" Click="Preset_Uninstall_Click">
+                        <Button x:Name="btnPresetUninstall" Grid.Row="5" Grid.Column="1" Margin="4" Click="Preset_Uninstall_Click">
                             <TextBlock Text="/uninstall" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="5" Grid.Column="2" Margin="4" Click="Preset_Help_Click">
+                        <Button x:Name="btnPresetHelp" Grid.Row="5" Grid.Column="2" Margin="4" Click="Preset_Help_Click">
                             <TextBlock Text="/help" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
 
-                        <Button Grid.Row="6" Grid.Column="0" Margin="4" Click="Preset_Apply_Click">
+                        <Button x:Name="btnPresetApply" Grid.Row="6" Grid.Column="0" Margin="4" Click="Preset_Apply_Click">
                             <TextBlock Text="/apply" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="6" Grid.Column="1" Margin="4" Click="Preset_Rollback_Click">
+                        <Button x:Name="btnPresetRollback" Grid.Row="6" Grid.Column="1" Margin="4" Click="Preset_Rollback_Click">
                             <TextBlock Text="/rollback" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
-                        <Button Grid.Row="6" Grid.Column="2" Margin="4" Click="Preset_QueryFormat_Click">
+                        <Button x:Name="btnPresetQueryFormat" Grid.Row="6" Grid.Column="2" Margin="4" Click="Preset_QueryFormat_Click">
                             <TextBlock Text="/query-format" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Button>
                     </Grid>
 
+                    <!-- 下面这些继续本地化 -->
                     <TextBlock x:Uid="CustomArgsLabel" FontWeight="SemiBold" Margin="0,6,0,0"/>
                     <TextBox x:Name="txtCustomArgs" x:Uid="CustomArgsBox" AcceptsReturn="False"/>
 
                     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left" Margin="0,8,0,0">
                         <Button x:Name="btnRunCustom" Width="200"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Click="RunCustom_Click"
-                                x:Uid="RunCustomButton"/>
+                    Style="{StaticResource AccentButtonStyle}"
+                    Click="RunCustom_Click"
+                    x:Uid="RunCustomButton"/>
                         <Button x:Name="btnOpenOutputPage" Click="OpenOutputPage_Click" x:Uid="OpenOutputPageButton"/>
                     </StackPanel>
 
-                    <TextBlock x:Uid="RecentActionsLabel" FontWeight="SemiBold" Margin="0,12,0,0"/>
-                    <ListView x:Name="lvHistory" MaxHeight="160" SelectionMode="Single"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,12,0,0">
+                        <TextBlock x:Uid="RecentActionsLabel" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button x:Name="btnClearHistory"
+            x:Uid="ClearHistoryButton"
+            Background="Red"
+            Foreground="White"
+            Margin="12,0,0,0"
+            HorizontalAlignment="Right"
+            Click="BtnClearHistory_Click"/>
+                    </StackPanel>
+
+                    <ListView x:Name="lvHistory" MaxHeight="160" SelectionMode="Single"
+          RightTapped="lvHistory_RightTapped"/>
                 </StackPanel>
             </Border>
 

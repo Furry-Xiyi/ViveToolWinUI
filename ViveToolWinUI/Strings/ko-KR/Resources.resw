@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root xml:lang="ko-KR">
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value>
+	</resheader>
+
+	<!-- ViveTool Page / Action Area -->
+	<data name="PageTitle.Text" xml:space="preserve"><value>ViveTool 작업</value></data>
+	<data name="ActionTitle.Text" xml:space="preserve"><value>작업</value></data>
+
+	<!-- ComboBox Items -->
+	<data name="ActionEnable.Content" xml:space="preserve"><value>사용</value></data>
+	<data name="ActionDisable.Content" xml:space="preserve"><value>사용 안 함</value></data>
+	<data name="ActionReset.Content" xml:space="preserve"><value>재설정</value></data>
+
+	<data name="FeatureIdLabel.Text" xml:space="preserve"><value>기능 ID</value></data>
+	<data name="FeatureIdBox.PlaceholderText" xml:space="preserve"><value>예: 39281392, 쉼표로 여러 ID 구분 가능</value></data>
+
+	<data name="OptionalParamsLabel.Text" xml:space="preserve"><value>선택 매개변수</value></data>
+	<data name="AutoReboot.Content" xml:space="preserve"><value>자동 재시작</value></data>
+	<data name="VerboseOutput.Content" xml:space="preserve"><value>상세 출력</value></data>
+
+	<data name="RunButton.Content" xml:space="preserve"><value>실행</value></data>
+	<data name="QuickCmdTitle.Text" xml:space="preserve"><value>빠른 명령</value></data>
+	<data name="CustomArgsLabel.Text" xml:space="preserve"><value>사용자 매개변수</value></data>
+	<data name="CustomArgsBox.PlaceholderText" xml:space="preserve"><value>예: /enable /id:39281392 또는 /query</value></data>
+	<data name="RunCustomButton.Content" xml:space="preserve"><value>사용자 명령 실행</value></data>
+	<data name="OpenOutputPageButton.Content" xml:space="preserve"><value>전체 출력 보기</value></data>
+	<data name="RecentActionsLabel.Text" xml:space="preserve"><value>최근 작업</value></data>
+
+	<!-- SettingsPage Group Titles -->
+	<data name="AppearanceGroup.Text" xml:space="preserve"><value>외관 및 재질</value></data>
+	<data name="BehaviorGroup.Text" xml:space="preserve"><value>동작</value></data>
+	<data name="AboutGroup.Text" xml:space="preserve"><value>정보</value></data>
+
+	<!-- Theme Settings -->
+	<data name="ThemeHeaderTitle.Text" xml:space="preserve"><value>테마</value></data>
+	<data name="ThemeHeaderSubtitle.Text" xml:space="preserve"><value>애플리케이션 테마 선택</value></data>
+	<data name="ThemeSystem.Content" xml:space="preserve"><value>시스템과 동일</value></data>
+	<data name="ThemeLight.Content" xml:space="preserve"><value>라이트</value></data>
+	<data name="ThemeDark.Content" xml:space="preserve"><value>다크</value></data>
+
+	<!-- Material Settings -->
+	<data name="MaterialHeaderTitle.Text" xml:space="preserve"><value>배경 재질</value></data>
+	<data name="MaterialHeaderSubtitle.Text" xml:space="preserve"><value>애플리케이션 재질 선택</value></data>
+	<data name="MaterialAcrylic.Content" xml:space="preserve"><value>아크릴</value></data>
+	<data name="MaterialMica.Content" xml:space="preserve"><value>마이카</value></data>
+	<data name="MaterialMicaAlt.Content" xml:space="preserve"><value>마이카 대체</value></data>
+
+	<!-- Kernel Management -->
+	<data name="KernelHeaderTitle.Text" xml:space="preserve"><value>커널 관리</value></data>
+	<data name="KernelHeaderSubtitle.Text" xml:space="preserve"><value>업데이트 확인 / 사용자 링크 / zip 가져오기</value></data>
+
+	<data name="BtnCheckViveToolUpdate.Content" xml:space="preserve"><value>업데이트 확인</value></data>
+	<data name="BtnCustomUpdateLink.Content" xml:space="preserve"><value>사용자 업데이트 링크</value></data>
+	<data name="BtnImportKernelZip.Content" xml:space="preserve"><value>커널 Zip 가져오기</value></data>
+	<data name="BtnOpenCoreFolder.Content" xml:space="preserve"><value>커널 폴더 열기</value></data>
+	<data name="BtnBackupCore.Content" xml:space="preserve"><value>커널을 데스크톱에 백업</value></data>
+	<data name="BtnRestoreCore.Content" xml:space="preserve"><value>백업에서 복원</value></data>
+
+	<data name="BtnExportSettings.Content" xml:space="preserve"><value>설정 내보내기 (.json)</value></data>
+	<data name="BtnImportSettings.Content" xml:space="preserve"><value>설정 가져오기 (.json)</value></data>
+	<data name="BtnResetSettings.Content" xml:space="preserve"><value>설정 재설정</value></data>
+	<data name="BtnTestViveTool.Content" xml:space="preserve"><value>진단: vivetool /version</value></data>
+
+	<!-- ToggleSwitch -->
+	<data name="AutoUpdateViveToolToggle.Header" xml:space="preserve"><value>ViveTool 커널 자동 업데이트</value></data>
+
+	<!-- About Panel -->
+	<data name="AboutTitle.Text" xml:space="preserve"><value>정보</value></data>
+	<data name="AppTitle.Text" xml:space="preserve"><value>ViveTool WinUI</value></data>
+	<data name="AppPublisher.Text" xml:space="preserve"><value>YourPublisherName 제공</value></data>
+	<data name="AppVersion.Text" xml:space="preserve"><value>버전 {0}</value></data>
+
+	<data name="JoinQQButton.Content" xml:space="preserve"><value>QQ 그룹 참가</value></data>
+	<data name="JoinDiscordButton.Content" xml:space="preserve"><value>Discord 참가</value></data>
+	<data name="FeedbackButton.Content" xml:space="preserve"><value>피드백 보내기</value></data>
+
+	<!-- Helper Descriptions -->
+	<data name="AppearanceSubheader.Text" xml:space="preserve"><value>외관 설정</value></data>
+	<data name="BehaviorSubheader.Text" xml:space="preserve"><value>동작 및 커널</value></data>
+	<data name="AboutSubheader.Text" xml:space="preserve"><value>앱 정보 및 지원</value></data>
+
+	<!-- Dialogs -->
+	<data name="ClearHistoryButton.Content" xml:space="preserve"><value>모두 삭제</value></data>
+	<data name="ClearHistoryDialog.Title" xml:space="preserve"><value>삭제 확인</value></data>
+	<data name="ClearHistoryDialog.Content" xml:space="preserve"><value>최근 작업 목록을 지우시겠습니까?</value></data>
+	<data name="ClearHistoryDialog.PrimaryButtonText" xml:space="preserve"><value>삭제</value></data>
+	<data name="ClearHistoryDialog.CloseButtonText" xml:space="preserve"><value>취소</value></data>
+
+	<!-- Context Menu -->
+	<data name="HistoryMenu.Enable.Text" xml:space="preserve"><value>이 ID 사용</value></data>
+	<data name="HistoryMenu.Disable.Text" xml:space="preserve"><value>이 ID 사용 중지</value></data>
+	<data name="HistoryMenu.Reset.Text" xml:space="preserve"><value>재설정</value></data>
+	<data name="HistoryMenu.Delete.Text" xml:space="preserve"><value>기록 삭제</value></data>
+
+	<!-- Input Dialogs - addsub -->
+	<data name="AddSubTitle" xml:space="preserve"><value>addsub 매개변수</value></data>
+	<data name="AddSubMessage" xml:space="preserve"><value>addsub 매개변수를 입력하세요(예: /id:12345 /user:...)</value></data>
+
+	<!-- Input Dialogs - delsub -->
+	<data name="DelSubTitle" xml:space="preserve"><value>delsub 매개변수</value></data>
+	<data name="DelSubMessage" xml:space="preserve"><value>delsub 매개변수를 입력하세요(예: /id:12345 /user:...)</value></data>
+
+	<!-- Input Dialogs - notifyusage -->
+	<data name="NotifyUsageTitle" xml:space="preserve"><value>notifyusage 매개변수</value></data>
+	<data name="NotifyUsageMessage" xml:space="preserve"><value>notifyusage 매개변수를 입력하세요(예: /id:12345 /usage:1)</value></data>
+
+	<!-- Input Dialogs - export -->
+	<data name="ExportTitle" xml:space="preserve"><value>export 매개변수</value></data>
+	<data name="ExportMessage" xml:space="preserve"><value>선택 사항: 출력 파일 경로 입력 또는 비워 두기(현재 디렉터리에 생성)</value></data>
+
+	<!-- Input Dialogs - import -->
+	<data name="ImportTitle" xml:space="preserve"><value>import 매개변수</value></data>
+	<data name="ImportMessage" xml:space="preserve"><value>가져올 파일 경로를 입력하세요(필수)</value></data>
+
+	<!-- Common Dialog Buttons -->
+	<data name="DialogOK" xml:space="preserve"><value>확인</value></data>
+	<data name="DialogCancel" xml:space="preserve"><value>취소</value></data>
+
+	<!-- Reboot Dialog -->
+	<data name="RebootTitle" xml:space="preserve"><value>시스템 재시작</value></data>
+	<data name="RebootMessage" xml:space="preserve"><value>명령이 성공적으로 실행되었습니다. 변경 사항을 적용하려면 지금 재시작하시겠습니까?</value></data>
+	<data name="RebootNow" xml:space="preserve"><value>지금 재시작</value></data>
+	<data name="RebootLater" xml:space="preserve"><value>나중에 재시작</value></data>
+
+	<!-- Messages & Notifications -->
+	<data name="WarningEmptyFeatureId" xml:space="preserve"><value>기능 ID를 입력하세요</value></data>
+	<data name="ErrorInvalidFeatureId" xml:space="preserve"><value>유효하지 않은 기능 ID 형식</value></data>
+	<data name="ErrorTooManyIds" xml:space="preserve"><value>지정된 기능 ID가 너무 많습니다</value></data>
+	<data name="ErrorIdLength" xml:space="preserve"><value>각 기능 ID는 8자리여야 합니다(예: 56848060)</value></data>
+	<data name="WarningEmptyArgs" xml:space="preserve"><value>매개변수를 입력하세요</value></data>
+	<data name="ErrorViveToolNotFound" xml:space="preserve"><value>ViveTool을 찾을 수 없습니다</value></data>
+	<data name="ErrorUACDenied" xml:space="preserve"><value>관리자 권한 요청이 거부되었거나 획득할 수 없습니다</value></data>
+	<data name="ErrorProcessStart" xml:space="preserve"><value>권한 상승된 명령 프로세스를 시작할 수 없습니다</value></data>
+	<data name="ErrorTimeout" xml:space="preserve"><value>ViveTool 실행 시간 초과</value></data>
+	<data name="ErrorParseFeatureId" xml:space="preserve"><value>ViveTool이 구문 분석 오류를 반환했거나 기능 ID가 지정되지 않았습니다. 입력을 확인하세요.</value></data>
+	<data name="ErrorPartialFailed" xml:space="preserve"><value>일부 기능이 예상대로 적용되지 않았습니다: {0}. 출력을 확인하고 다시 시도하세요.</value></data>
+	<data name="SuccessExecution" xml:space="preserve"><value>명령이 성공적으로 실행되었습니다</value></data>
+	<data name="ErrorExecutionFailed" xml:space="preserve"><value>명령 실행 실패. 세부 사항은 출력을 확인하세요.</value></data>
+	<data name="ErrorNoOutput" xml:space="preserve"><value>vivetool 출력이 캡처되지 않았습니다. 디버깅을 위해 임시 출력 파일이 보존되었습니다(로그 참조).</value></data>
+	<data name="ErrorExecution" xml:space="preserve"><value>실행 실패: {0}</value></data>
+	<data name="InfoRebootScheduled" xml:space="preserve"><value>시스템이 10초 후 재시작됩니다</value></data>
+	<data name="ErrorRebootFailed" xml:space="preserve"><value>시스템을 재시작할 수 없습니다: {0}</value></data>
+	<data name="InfoRebootIncluded" xml:space="preserve"><value>/reboot 매개변수 포함; vivetool 동작에 따라 명령 실행 후 시스템이 재시작됩니다(필요 시).</value></data>
+
+	<!-- Status Messages -->
+	<data name="StatusProcessing" xml:space="preserve"><value>관리자 모드로 실행 중...</value></data>
+	<data name="StatusReady" xml:space="preserve"><value>준비 완료</value></data>
+	<data name="LogUACDenied" xml:space="preserve"><value>사용자가 UAC를 거부했거나 권한 상승이 불가합니다</value></data>
+</root>

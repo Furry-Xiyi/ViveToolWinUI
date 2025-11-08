@@ -8,11 +8,11 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="6BABD18E.FurryXiyi.ViveToolWinUI"
-    Publisher="CN=Furry_Xiyi"
-    Version="1.0.0.0" />
+    Name="6BABD18E.ViveToolWinUI"
+    Publisher="CN=1D20BDA0-45B9-4AE2-B595-48FAEE1F3DC1"
+    Version="1.1.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="bb425086-5f1e-456f-b55a-3625923e7c1f" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="ff3cdb73-5002-47b5-b8a1-518b50758162" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>ViveTool WinUI</DisplayName>
@@ -25,9 +25,10 @@
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
   </Dependencies>
 
-  <Resources>
-    <Resource Language="x-generate"/>
-  </Resources>
+	<Resources>
+		<Resource Language="en-US"/>
+		<Resource Language="zh-Hans"/>
+	</Resources>
 
   <Applications>
     <Application Id="App"

@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root xml:lang="ja-JP">
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0</value>
+	</resheader>
+
+	<!-- ViveTool Page / Action Area -->
+	<data name="PageTitle.Text" xml:space="preserve"><value>ViveTool 操作</value></data>
+	<data name="ActionTitle.Text" xml:space="preserve"><value>操作</value></data>
+
+	<!-- ComboBox Items -->
+	<data name="ActionEnable.Content" xml:space="preserve"><value>有効にする</value></data>
+	<data name="ActionDisable.Content" xml:space="preserve"><value>無効にする</value></data>
+	<data name="ActionReset.Content" xml:space="preserve"><value>リセット</value></data>
+
+	<data name="FeatureIdLabel.Text" xml:space="preserve"><value>Feature ID</value></data>
+	<data name="FeatureIdBox.PlaceholderText" xml:space="preserve"><value>例: 39281392, カンマで複数の ID を区切れます</value></data>
+
+	<data name="OptionalParamsLabel.Text" xml:space="preserve"><value>オプション パラメーター</value></data>
+	<data name="AutoReboot.Content" xml:space="preserve"><value>자동 재시작</value></data>
+	<data name="VerboseOutput.Content" xml:space="preserve"><value>詳細出力</value></data>
+
+	<data name="RunButton.Content" xml:space="preserve"><value>実行</value></data>
+	<data name="QuickCmdTitle.Text" xml:space="preserve"><value>クイック コマンド</value></data>
+	<data name="CustomArgsLabel.Text" xml:space="preserve"><value>カスタム パラメーター</value></data>
+	<data name="CustomArgsBox.PlaceholderText" xml:space="preserve"><value>例: /enable /id:39281392 または /query</value></data>
+	<data name="RunCustomButton.Content" xml:space="preserve"><value>カスタム実行</value></data>
+	<data name="OpenOutputPageButton.Content" xml:space="preserve"><value>完全な出力を表示</value></data>
+	<data name="RecentActionsLabel.Text" xml:space="preserve"><value>最近の操作</value></data>
+
+	<!-- SettingsPage Group Titles -->
+	<data name="AppearanceGroup.Text" xml:space="preserve"><value>外観とマテリアル</value></data>
+	<data name="BehaviorGroup.Text" xml:space="preserve"><value>動作</value></data>
+	<data name="AboutGroup.Text" xml:space="preserve"><value>情報</value></data>
+
+	<!-- Theme Settings -->
+	<data name="ThemeHeaderTitle.Text" xml:space="preserve"><value>テーマ</value></data>
+	<data name="ThemeHeaderSubtitle.Text" xml:space="preserve"><value>アプリのテーマを選択</value></data>
+	<data name="ThemeSystem.Content" xml:space="preserve"><value>システムに合わせる</value></data>
+	<data name="ThemeLight.Content" xml:space="preserve"><value>ライト</value></data>
+	<data name="ThemeDark.Content" xml:space="preserve"><value>ダーク</value></data>
+
+	<!-- Material Settings -->
+	<data name="MaterialHeaderTitle.Text" xml:space="preserve"><value>背景マテリアル</value></data>
+	<data name="MaterialHeaderSubtitle.Text" xml:space="preserve"><value>アプリのマテリアルを選択</value></data>
+	<data name="MaterialAcrylic.Content" xml:space="preserve"><value>アクリル</value></data>
+	<data name="MaterialMica.Content" xml:space="preserve"><value>マイカ</value></data>
+	<data name="MaterialMicaAlt.Content" xml:space="preserve"><value>マイカ代替</value></data>
+
+	<!-- Kernel Management -->
+	<data name="KernelHeaderTitle.Text" xml:space="preserve"><value>カーネル管理</value></data>
+	<data name="KernelHeaderSubtitle.Text" xml:space="preserve"><value>更新の確認 / カスタムリンク / zip をインポート</value></data>
+
+	<data name="BtnCheckViveToolUpdate.Content" xml:space="preserve"><value>更新を確認</value></data>
+	<data name="BtnCustomUpdateLink.Content" xml:space="preserve"><value>カスタム更新リンク</value></data>
+	<data name="BtnImportKernelZip.Content" xml:space="preserve"><value>カーネル Zip をインポート</value></data>
+	<data name="BtnOpenCoreFolder.Content" xml:space="preserve"><value>カーネルフォルダーを開く</value></data>
+	<data name="BtnBackupCore.Content" xml:space="preserve"><value>カーネルをデスクトップにバックアップ</value></data>
+	<data name="BtnRestoreCore.Content" xml:space="preserve"><value>バックアップから復元</value></data>
+
+	<data name="BtnExportSettings.Content" xml:space="preserve"><value>設定をエクスポート (.json)</value></data>
+	<data name="BtnImportSettings.Content" xml:space="preserve"><value>設定をインポート (.json)</value></data>
+	<data name="BtnResetSettings.Content" xml:space="preserve"><value>設定をリセット</value></data>
+	<data name="BtnTestViveTool.Content" xml:space="preserve"><value>診断: vivetool /version</value></data>
+
+	<!-- ToggleSwitch -->
+	<data name="AutoUpdateViveToolToggle.Header" xml:space="preserve"><value>ViveTool カーネルの自動更新</value></data>
+
+	<!-- About Panel -->
+	<data name="AboutTitle.Text" xml:space="preserve"><value>情報</value></data>
+	<data name="AppTitle.Text" xml:space="preserve"><value>ViveTool WinUI</value></data>
+	<data name="AppPublisher.Text" xml:space="preserve"><value>YourPublisherName 提供</value></data>
+	<data name="AppVersion.Text" xml:space="preserve"><value>バージョン {0}</value></data>
+
+	<data name="JoinQQButton.Content" xml:space="preserve"><value>QQ グループに参加</value></data>
+	<data name="JoinDiscordButton.Content" xml:space="preserve"><value>Discord に参加</value></data>
+	<data name="FeedbackButton.Content" xml:space="preserve"><value>フィードバックを送信</value></data>
+
+	<!-- Helper Descriptions -->
+	<data name="AppearanceSubheader.Text" xml:space="preserve"><value>外観設定</value></data>
+	<data name="BehaviorSubheader.Text" xml:space="preserve"><value>動作とカーネル</value></data>
+	<data name="AboutSubheader.Text" xml:space="preserve"><value>アプリ情報とサポート</value></data>
+
+	<!-- Dialogs -->
+	<data name="ClearHistoryButton.Content" xml:space="preserve"><value>すべて削除</value></data>
+	<data name="ClearHistoryDialog.Title" xml:space="preserve"><value>削除の確認</value></data>
+	<data name="ClearHistoryDialog.Content" xml:space="preserve"><value>最近の操作リストを消去しますか?</value></data>
+	<data name="ClearHistoryDialog.PrimaryButtonText" xml:space="preserve"><value>削除</value></data>
+	<data name="ClearHistoryDialog.CloseButtonText" xml:space="preserve"><value>キャンセル</value></data>
+
+	<!-- Context Menu -->
+	<data name="HistoryMenu.Enable.Text" xml:space="preserve"><value>この ID を有効にする</value></data>
+	<data name="HistoryMenu.Disable.Text" xml:space="preserve"><value>この ID を無効にする</value></data>
+	<data name="HistoryMenu.Reset.Text" xml:space="preserve"><value>リセット</value></data>
+	<data name="HistoryMenu.Delete.Text" xml:space="preserve"><value>この記録を削除</value></data>
+
+	<!-- Input Dialogs - addsub -->
+	<data name="AddSubTitle" xml:space="preserve"><value>addsub パラメーター</value></data>
+	<data name="AddSubMessage" xml:space="preserve"><value>addsub パラメーターを入力してください（例: /id:12345 /user:...）</value></data>
+
+	<!-- Input Dialogs - delsub -->
+	<data name="DelSubTitle" xml:space="preserve"><value>delsub パラメーター</value></data>
+	<data name="DelSubMessage" xml:space="preserve"><value>delsub パラメーターを入力してください（例: /id:12345 /user:...）</value></data>
+
+	<!-- Input Dialogs - notifyusage -->
+	<data name="NotifyUsageTitle" xml:space="preserve"><value>notifyusage パラメーター</value></data>
+	<data name="NotifyUsageMessage" xml:space="preserve"><value>notifyusage パラメーターを入力してください（例: /id:12345 /usage:1）</value></data>
+
+	<!-- Input Dialogs - export -->
+	<data name="ExportTitle" xml:space="preserve"><value>export パラメーター</value></data>
+	<data name="ExportMessage" xml:space="preserve"><value>任意: 出力ファイルパスを指定するか空欄にしてください(現在のディレクトリに生成されます)</value></data>
+
+	<!-- Input Dialogs - import -->
+	<data name="ImportTitle" xml:space="preserve"><value>import パラメーター</value></data>
+	<data name="ImportMessage" xml:space="preserve"><value>インポートするファイルパスを入力してください(必須)</value></data>
+
+	<!-- Common Dialog Buttons -->
+	<data name="DialogOK" xml:space="preserve"><value>OK</value></data>
+	<data name="DialogCancel" xml:space="preserve"><value>キャンセル</value></data>
+
+	<!-- Reboot Dialog -->
+	<data name="RebootTitle" xml:space="preserve"><value>システム再起動</value></data>
+	<data name="RebootMessage" xml:space="preserve"><value>コマンドが正常に実行されました。変更を適用するために今すぐ再起動しますか?</value></data>
+	<data name="RebootNow" xml:space="preserve"><value>今すぐ再起動</value></data>
+	<data name="RebootLater" xml:space="preserve"><value>あとで再起動</value></data>
+
+	<!-- Messages & Notifications -->
+	<data name="WarningEmptyFeatureId" xml:space="preserve"><value>Feature ID を入力してください</value></data>
+	<data name="ErrorInvalidFeatureId" xml:space="preserve"><value>無効な Feature ID 形式</value></data>
+	<data name="ErrorTooManyIds" xml:space="preserve"><value>指定された Feature ID が多すぎます</value></data>
+	<data name="ErrorIdLength" xml:space="preserve"><value>各 Feature ID は 8 桁である必要があります（例: 56848060）</value></data>
+	<data name="WarningEmptyArgs" xml:space="preserve"><value>パラメーターを入力してください</value></data>
+	<data name="ErrorViveToolNotFound" xml:space="preserve"><value>ViveTool が見つかりません</value></data>
+	<data name="ErrorUACDenied" xml:space="preserve"><value>管理者権限の要求が拒否されたか取得できません</value></data>
+	<data name="ErrorProcessStart" xml:space="preserve"><value>昇格されたコマンドプロセスを開始できません</value></data>
+	<data name="ErrorTimeout" xml:space="preserve"><value>ViveTool の実行がタイムアウトしました</value></data>
+	<data name="ErrorParseFeatureId" xml:space="preserve"><value>ViveTool が解析エラーを返したか Feature ID が指定されていません。入力を確認してください。</value></data>
+	<data name="ErrorPartialFailed" xml:space="preserve"><value>一部の機能が期待通りに適用されませんでした: {0}。出力を確認して再試行してください。</value></data>
+	<data name="SuccessExecution" xml:space="preserve"><value>コマンドが正常に実行されました</value></data>
+	<data name="ErrorExecutionFailed" xml:space="preserve"><value>コマンドの実行に失敗しました。詳細は出力を参照してください。</value></data>
+	<data name="ErrorNoOutput" xml:space="preserve"><value>vivetool の出力が取得されませんでした。デバッグ用に一時出力ファイルを保持しました(ログ参照)。</value></data>
+	<data name="ErrorExecution" xml:space="preserve"><value>実行に失敗しました: {0}</value></data>
+	<data name="InfoRebootScheduled" xml:space="preserve"><value>システムは 10 秒後に再起動します</value></data>
+	<data name="ErrorRebootFailed" xml:space="preserve"><value>システムを再起動できません: {0}</value></data>
+	<data name="InfoRebootIncluded" xml:space="preserve"><value>/reboot パラメーターが含まれています。必要に応じて vivetool の動作に従い、コマンド実行後にシステムを再起動します。</value></data>
+
+	<!-- Status Messages -->
+	<data name="StatusProcessing" xml:space="preserve"><value>管理者モードで実行中...</value></data>
+	<data name="StatusReady" xml:space="preserve"><value>準備完了</value></data>
+	<data name="LogUACDenied" xml:space="preserve"><value>ユーザーが UAC を拒否したか、昇格できません</value></data>
+</root>

@@ -9,59 +9,52 @@
 
             <!-- 外观与材质组 -->
             <StackPanel Spacing="12" HorizontalAlignment="Stretch">
-                <!-- AppearanceGroup.Text -->
-                <TextBlock x:Uid="AppearanceGroup" x:Name="AppearanceGroupText" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock x:Uid="AppearanceGroup" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
 
                 <!-- 应用主题折叠卡 -->
-                <muxc:Expander x:Name="ThemeExpander" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="70">
+                <muxc:Expander x:Name="ThemeExpander" IsExpanded="False"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="70">
                     <muxc:Expander.Header>
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <FontIcon Glyph="&#xE706;" Width="30" FontSize="20" VerticalAlignment="Center"/>
                             <StackPanel>
-                                <!-- ThemeHeader.Title.Text / ThemeHeader.Subtitle.Text -->
-                                <TextBlock x:Uid="ThemeHeader.Title" x:Name="ThemeHeaderTitle" FontSize="16" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <TextBlock x:Uid="ThemeHeader.Subtitle" x:Name="ThemeHeaderSubtitle" FontSize="12" Opacity="0.7" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="ThemeHeaderTitle" FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="ThemeHeaderSubtitle" FontSize="12" Opacity="0.7" 
+                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             </StackPanel>
                         </StackPanel>
                     </muxc:Expander.Header>
+
                     <muxc:Expander.Content>
                         <StackPanel Spacing="8" Padding="12,0,0,12" HorizontalAlignment="Left">
-                            <RadioButton x:Name="ThemeSystem" Checked="Theme_Checked" Tag="System">
-                                <TextBlock x:Uid="ThemeSystem" x:Name="ThemeSystemText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </RadioButton>
-                            <RadioButton x:Name="ThemeLight" Checked="Theme_Checked" Tag="Light">
-                                <TextBlock x:Uid="ThemeLight" x:Name="ThemeLightText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </RadioButton>
-                            <RadioButton x:Name="ThemeDark" Checked="Theme_Checked" Tag="Dark">
-                                <TextBlock x:Uid="ThemeDark" x:Name="ThemeDarkText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </RadioButton>
+                            <RadioButton x:Name="ThemeSystem" x:Uid="ThemeSystem" Content="" Checked="Theme_Checked" Tag="System"/>
+                            <RadioButton x:Name="ThemeLight" x:Uid="ThemeLight" Content="" Checked="Theme_Checked" Tag="Light"/>
+                            <RadioButton x:Name="ThemeDark" x:Uid="ThemeDark" Content="" Checked="Theme_Checked" Tag="Dark"/>
                         </StackPanel>
                     </muxc:Expander.Content>
                 </muxc:Expander>
 
                 <!-- 背景材质折叠卡 -->
-                <muxc:Expander x:Name="MaterialExpander" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="70">
+                <muxc:Expander x:Name="MaterialExpander" IsExpanded="False"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="70">
                     <muxc:Expander.Header>
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <FontIcon Glyph="&#xE2B1;" Width="30" FontSize="20" VerticalAlignment="Center"/>
                             <StackPanel>
-                                <!-- MaterialHeader.Title / MaterialHeader.Subtitle -->
-                                <TextBlock x:Uid="MaterialHeader.Title" x:Name="MaterialHeaderTitle" FontSize="16" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <TextBlock x:Uid="MaterialHeader.Subtitle" x:Name="MaterialHeaderSubtitle" FontSize="12" Opacity="0.7" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="MaterialHeaderTitle" FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="MaterialHeaderSubtitle" FontSize="12" Opacity="0.7" 
+                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             </StackPanel>
                         </StackPanel>
                     </muxc:Expander.Header>
+
                     <muxc:Expander.Content>
                         <StackPanel Spacing="8" Padding="12,0,0,12" HorizontalAlignment="Left">
-                            <RadioButton x:Name="MaterialAcrylic" Checked="Material_Checked" Tag="Acrylic">
-                                <TextBlock x:Uid="MaterialAcrylic" x:Name="MaterialAcrylicText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </RadioButton>
-                            <RadioButton x:Name="MaterialMica" Checked="Material_Checked" Tag="Mica">
-                                <TextBlock x:Uid="MaterialMica" x:Name="MaterialMicaText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </RadioButton>
-                            <RadioButton x:Name="MaterialMicaAlt" Checked="Material_Checked" Tag="MicaAlt">
-                                <TextBlock x:Uid="MaterialMicaAlt" x:Name="MaterialMicaAltText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </RadioButton>
+                            <RadioButton x:Name="MaterialAcrylic" x:Uid="MaterialAcrylic" Content="" Checked="Material_Checked" Tag="Acrylic"/>
+                            <RadioButton x:Name="MaterialMica" x:Uid="MaterialMica" Content="" Checked="Material_Checked" Tag="Mica"/>
+                            <RadioButton x:Name="MaterialMicaAlt" x:Uid="MaterialMicaAlt" Content="" Checked="Material_Checked" Tag="MicaAlt"/>
                         </StackPanel>
                     </muxc:Expander.Content>
                 </muxc:Expander>
@@ -69,44 +62,58 @@
 
             <!-- ViveTool 内核 / 行为 -->
             <StackPanel Spacing="12" HorizontalAlignment="Stretch">
-                <!-- BehaviorGroup.Text -->
-                <TextBlock x:Uid="BehaviorGroup" x:Name="BehaviorGroupText" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                <TextBlock x:Uid="BehaviorGroup" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
 
                 <!-- 内核管理折叠卡 -->
-                <muxc:Expander x:Name="KernelExpander" IsExpanded="True" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="70">
+                <muxc:Expander x:Name="KernelExpander" IsExpanded="True"
+                               HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="70">
                     <muxc:Expander.Header>
                         <StackPanel Orientation="Horizontal" Spacing="12">
                             <FontIcon Glyph="&#xE9D9;" Width="30" FontSize="20" VerticalAlignment="Center"/>
                             <StackPanel>
-                                <!-- KernelHeader.Title / KernelHeader.Subtitle -->
-                                <TextBlock x:Uid="KernelHeader.Title" x:Name="KernelHeaderTitle" FontSize="16" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <TextBlock x:Uid="KernelHeader.Subtitle" x:Name="KernelHeaderSubtitle" FontSize="12" Opacity="0.7" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="KernelHeaderTitle" FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="KernelHeaderSubtitle" FontSize="12" Opacity="0.7" 
+                                           Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             </StackPanel>
                         </StackPanel>
                     </muxc:Expander.Header>
+
                     <muxc:Expander.Content>
-                        <StackPanel Spacing="8" Padding="12,0,0,12" HorizontalAlignment="Left">
-                            <!-- Use a wrap-capable panel so buttons flow to next line when space is limited -->
-                            <VariableSizedWrapGrid Orientation="Horizontal" Margin="0,0,0,8" HorizontalAlignment="Left">
-                                <Button x:Name="BtnCheckViveToolUpdate" Click="CheckViveToolUpdate_Click" Width="120" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                                    <TextBlock x:Uid="BtnCheckViveToolUpdate" x:Name="BtnCheckViveToolUpdateText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                </Button>
-                                <Button x:Name="BtnCustomUpdateLink" Click="CustomUpdateLink_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                                    <TextBlock x:Uid="BtnCustomUpdateLink" x:Name="BtnCustomUpdateLinkText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                </Button>
-                                <Button x:Name="BtnImportKernelZip" Click="ImportKernelZip_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                                    <TextBlock x:Uid="BtnImportKernelZip" x:Name="BtnImportKernelZipText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                </Button>
-                                <Button x:Name="BtnOpenCoreFolder" Click="BtnOpenCoreFolder_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                                    <TextBlock x:Uid="BtnOpenCoreFolder" x:Name="BtnOpenCoreFolderText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                </Button>
-                                <Button x:Name="BtnBackupCore" Click="BtnBackupCore_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                                    <TextBlock x:Uid="BtnBackupCore" x:Name="BtnBackupCoreText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                </Button>
-                                <Button x:Name="BtnRestoreCore" Click="BtnRestoreCore_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                                    <TextBlock x:Uid="BtnRestoreCore" x:Name="BtnRestoreCoreText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                </Button>
-                            </VariableSizedWrapGrid>
+                        <StackPanel Spacing="8" Padding="12,0,0,12" HorizontalAlignment="Stretch">
+
+                            <!-- 按钮区：Grid 两行三列 -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 第一行按钮 -->
+                                <Button x:Name="BtnCheckViveToolUpdate" x:Uid="BtnCheckViveToolUpdate"
+                    Click="CheckViveToolUpdate_Click" Margin="6" Grid.Row="0" Grid.Column="0"/>
+                                <Button x:Name="BtnCustomUpdateLink" x:Uid="BtnCustomUpdateLink"
+                    Click="CustomUpdateLink_Click" Margin="6" Grid.Row="0" Grid.Column="1"/>
+                                <Button x:Name="BtnImportKernelZip" x:Uid="BtnImportKernelZip"
+                    Click="ImportKernelZip_Click" Margin="6" Grid.Row="0" Grid.Column="2"/>
+
+                                <!-- 第二行按钮 -->
+                                <Button x:Name="BtnOpenCoreFolder" x:Uid="BtnOpenCoreFolder"
+                    Click="BtnOpenCoreFolder_Click" Margin="6" Grid.Row="1" Grid.Column="0"/>
+                                <Button x:Name="BtnBackupCore" x:Uid="BtnBackupCore"
+                    Click="BtnBackupCore_Click" Margin="6" Grid.Row="1" Grid.Column="1"/>
+                                <Button x:Name="BtnRestoreCore" x:Uid="BtnRestoreCore"
+                    Click="BtnRestoreCore_Click" Margin="6" Grid.Row="1" Grid.Column="2"/>
+                            </Grid>
+
+                            <!-- 自动更新开关 -->
+                            <muxc:ToggleSwitch x:Name="AutoUpdateViveToolToggle" x:Uid="AutoUpdateViveToolToggle" Header=""
+                           Toggled="AutoUpdateViveToolToggle_Toggled" Margin="0,8,0,0"/>
                         </StackPanel>
                     </muxc:Expander.Content>
                 </muxc:Expander>
@@ -114,64 +121,64 @@
                 <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,8"/>
 
                 <VariableSizedWrapGrid Orientation="Horizontal" Margin="0,0,0,8" HorizontalAlignment="Left">
-                    <Button x:Name="BtnExportSettings" Click="BtnExportSettings_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                        <TextBlock x:Uid="BtnExportSettings" x:Name="BtnExportSettingsText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </Button>
-                    <Button x:Name="BtnImportSettings" Click="BtnImportSettings_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                        <TextBlock x:Uid="BtnImportSettings" x:Name="BtnImportSettingsText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </Button>
-                    <Button x:Name="BtnResetSettings" Click="BtnResetSettings_Click" Width="120" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                        <TextBlock x:Uid="BtnResetSettings" x:Name="BtnResetSettingsText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </Button>
+                    <Button x:Name="BtnExportSettings" x:Uid="BtnExportSettings" Content=""
+                            Click="BtnExportSettings_Click" Width="160" Margin="6"/>
+                    <Button x:Name="BtnImportSettings" x:Uid="BtnImportSettings" Content=""
+                            Click="BtnImportSettings_Click" Width="160" Margin="6"/>
+                    <Button x:Name="BtnResetSettings" x:Uid="BtnResetSettings" Content=""
+                            Click="BtnResetSettings_Click" Width="120" Margin="6"/>
+                    <Button x:Name="BtnTestViveTool" x:Uid="BtnTestViveTool" Content=""
+                            Click="BtnTestViveTool_Click" Width="160" Margin="6"/>
                 </VariableSizedWrapGrid>
-
-                <VariableSizedWrapGrid Orientation="Horizontal" Margin="0,0,0,8" HorizontalAlignment="Left">
-                    <Button x:Name="BtnTestViveTool" Click="BtnTestViveTool_Click" Width="160" Margin="6,6,6,6" HorizontalContentAlignment="Left">
-                        <TextBlock x:Uid="BtnTestViveTool" x:Name="BtnTestViveToolText" TextWrapping="Wrap" TextAlignment="Left" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </Button>
-                </VariableSizedWrapGrid>
-
-                <!-- ToggleSwitch Header 用子元素 TextBlock -->
-                <muxc:ToggleSwitch x:Name="AutoUpdateViveToolToggle" Toggled="AutoUpdateViveToolToggle_Toggled" Margin="0,8,0,0">
-                    <muxc:ToggleSwitch.Header>
-                        <TextBlock x:Uid="AutoUpdateViveToolToggleHeader" x:Name="AutoUpdateToggleHeaderText" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                    </muxc:ToggleSwitch.Header>
-                </muxc:ToggleSwitch>
             </StackPanel>
 
             <!-- 关于 -->
             <StackPanel Spacing="12" HorizontalAlignment="Stretch">
-                <!-- AboutTitle.Text -->
-                <TextBlock x:Uid="AboutTitle" x:Name="AboutTitleText" FontSize="20" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                <muxc:Expander x:Name="AboutExpander" IsExpanded="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="100">
+                <TextBlock x:Uid="AboutTitle" FontSize="20" FontWeight="SemiBold"
+               Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+
+                <muxc:Expander x:Name="AboutExpander" IsExpanded="False"
+                   HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" MinHeight="100">
                     <muxc:Expander.Header>
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <!-- 优先使用 Image 加载 Assets/StoreLogo，FontIcon作为回退 -->
-                            <Image x:Name="AppLogoImage" Width="30" Height="30" Stretch="UniformToFill" VerticalAlignment="Center" Visibility="Collapsed" Margin="0"/>
-                            <FontIcon x:Name="AppLogo" Glyph="&#xE7C1;" Width="30" FontSize="20" VerticalAlignment="Center"/>
+                        <!-- 给整个 Header 加左边距，比如 12px -->
+                        <StackPanel Orientation="Horizontal" Spacing="12" Margin="7,0,7,0">
+                            <Grid Width="30" Height="30" VerticalAlignment="Center">
+                                <Image x:Name="AppLogoImage" Stretch="Uniform"
+                   Visibility="Collapsed"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <FontIcon x:Name="AppLogo" Glyph="&#xE7C1;" FontSize="20"
+                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+
                             <StackPanel>
-                                <TextBlock x:Uid="AppTitle" x:Name="AppTitle" FontSize="18" FontWeight="SemiBold" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <TextBlock x:Uid="AppPublisher" x:Name="AppPublisher" FontSize="12" Opacity="0.7" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                                <TextBlock x:Uid="AppVersion" x:Name="AppVersion" FontSize="12" Opacity="0.7" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Name="AppTitle" FontSize="18" FontWeight="SemiBold"
+                       Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Name="AppPublisher" FontSize="12" Opacity="0.7"
+                       Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Name="AppVersion" FontSize="12" Opacity="0.7"
+                       Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
                             </StackPanel>
                         </StackPanel>
                     </muxc:Expander.Header>
+
                     <muxc:Expander.Content>
                         <StackPanel Spacing="8" Padding="12,0,0,12" HorizontalAlignment="Left">
-                            <HyperlinkButton x:Name="JoinQQButton" HorizontalAlignment="Left">
-                                <TextBlock x:Uid="JoinQQButton" x:Name="JoinQQButtonText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </HyperlinkButton>
-                            <HyperlinkButton x:Name="JoinDiscordButton" HorizontalAlignment="Left">
-                                <TextBlock x:Uid="JoinDiscordButton" x:Name="JoinDiscordButtonText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-                            </HyperlinkButton>
+                            <HyperlinkButton x:Name="JoinQQButton" x:Uid="JoinQQButton" Content=""
+                                 Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                 HorizontalAlignment="Left"/>
+                            <HyperlinkButton x:Name="JoinDiscordButton" x:Uid="JoinDiscordButton" Content=""
+                                 Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                 HorizontalAlignment="Left"/>
                         </StackPanel>
                     </muxc:Expander.Content>
                 </muxc:Expander>
             </StackPanel>
 
-            <HyperlinkButton x:Name="FeedbackButton" Click="SendFeedback_Click" HorizontalAlignment="Left">
-                <TextBlock x:Uid="FeedbackButton" x:Name="FeedbackButtonText" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
-            </HyperlinkButton>
+            <!-- 反馈按钮 -->
+            <HyperlinkButton x:Name="FeedbackButton" x:Uid="FeedbackButton" Content=""
+                 Click="SendFeedback_Click"
+                 Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                 HorizontalAlignment="Left"/>
         </StackPanel>
     </ScrollViewer>
 </Page>

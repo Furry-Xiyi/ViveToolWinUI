@@ -1,7 +1,10 @@
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,6 +21,7 @@ namespace ViveToolWinUI.Pages
     {
         private static readonly StringBuilder s_logBuffer = new();
         private readonly List<string> _history = new();
+        private const string HistoryKey = "RecentHistory";
         private CancellationTokenSource? _cts;
         private bool _isRunning = false;
 
@@ -29,7 +33,11 @@ namespace ViveToolWinUI.Pages
             cmbAction.SelectedIndex = 0;
             lvHistory.SelectionChanged += LvHistory_SelectionChanged;
 
-            this.Loaded += (_, __) => ApplyRunButtonAccent();
+            this.Loaded += (_, __) =>
+            {
+                ApplyRunButtonAccent();
+                LoadHistory(); // 页面加载时恢复历史
+            };
         }
 
         #region Appearance helpers
@@ -69,14 +77,86 @@ namespace ViveToolWinUI.Pages
 
         private string GetViveToolFolder()
         {
-            var localFolder = Path.Combine(ApplicationData.Current.LocalFolder.Path, "ViveTool");
-            if (Directory.Exists(localFolder) && File.Exists(Path.Combine(localFolder, "ViveTool.exe")))
-                return localFolder;
-            return Path.Combine(AppContext.BaseDirectory, "Assets", "ViveTool");
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, "ViveTool");
         }
 
-        private string GetViveToolExePath() => Path.Combine(GetViveToolFolder(), "ViveTool.exe");
+        private string GetViveToolExePath()
+        {
+            return Path.Combine(GetViveToolFolder(), "ViveTool.exe");
+        }
+        private void lvHistory_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var fe = e.OriginalSource as FrameworkElement;
+            if (fe?.DataContext is string clickedItem)
+            {
+                lvHistory.SelectedItem = clickedItem;
+            }
 
+            var selectedItem = lvHistory.SelectedItem as string;
+            if (selectedItem == null)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            // 启用
+            var enableItem = new MenuFlyoutItem { Text = LocalizationHelper.GetString("HistoryMenu.Enable.Text") };
+            enableItem.Click += History_Enable_Click;
+            if (IsItemEnabled(selectedItem))
+                enableItem.IsEnabled = false;
+            flyout.Items.Add(enableItem);
+
+            // 禁用
+            var disableItem = new MenuFlyoutItem { Text = LocalizationHelper.GetString("HistoryMenu.Disable.Text") };
+            disableItem.Click += History_Disable_Click;
+            if (IsItemDisabled(selectedItem))
+                disableItem.IsEnabled = false;
+            flyout.Items.Add(disableItem);
+
+            // 恢复默认
+            var resetItem = new MenuFlyoutItem { Text = LocalizationHelper.GetString("HistoryMenu.Reset.Text") };
+            resetItem.Click += History_Reset_Click;
+            flyout.Items.Add(resetItem);
+
+            // 分隔线
+            flyout.Items.Add(new MenuFlyoutSeparator());
+
+            // 删除
+            var deleteItem = new MenuFlyoutItem
+            {
+                Text = LocalizationHelper.GetString("HistoryMenu.Delete.Text"),
+                Foreground = new SolidColorBrush(Colors.Red)
+            };
+            deleteItem.Click += History_Delete_Click;
+            flyout.Items.Add(deleteItem);
+
+            flyout.ShowAt(lvHistory, e.GetPosition(lvHistory));
+        }
+        private string GetLocalizedString(ResourceLoader loader, string key, string fallback)
+        {
+            try
+            {
+                var result = loader.GetString(key);
+                return string.IsNullOrEmpty(result) ? fallback : result;
+            }
+            catch
+            {
+                return fallback;
+            }
+        }
+
+        private bool IsItemEnabled(string item)
+        {
+            // TODO: 根据 item 判断是否已启用
+            return item.Contains("Enabled");
+        }
+
+        private bool IsItemDisabled(string item)
+        {
+            // TODO: 根据 item 判断是否已禁用
+            return item.Contains("Disabled");
+        }
         #region Preset handlers (部分命令需要参数，弹窗收集)
         private void Preset_Query_Click(object s, RoutedEventArgs e) => _ = RunAsAdminCmd("/query");
         private void Preset_Status_Click(object s, RoutedEventArgs e) => _ = RunAsAdminCmd("/status");
@@ -92,29 +172,31 @@ namespace ViveToolWinUI.Pages
         private void Preset_QuerySubs_Click(object s, RoutedEventArgs e) => _ = RunAsAdminCmd("/querysubs");
         private async void Preset_AddSub_Click(object s, RoutedEventArgs e)
         {
-            var param = await PromptForInputAsync("addsub 参数", "请输入 addsub 参数（例如: /id:12345 /user:...）");
+            var param = await PromptForInputAsync("AddSubTitle", "AddSubMessage");
             if (!string.IsNullOrEmpty(param)) await RunAsAdminCmd($"/addsub {param}");
         }
+
         private async void Preset_DelSub_Click(object s, RoutedEventArgs e)
         {
-            var param = await PromptForInputAsync("delsub 参数", "请输入 delsub 参数（例如: /id:12345 /user:...）");
+            var param = await PromptForInputAsync("DelSubTitle", "DelSubMessage");
             if (!string.IsNullOrEmpty(param)) await RunAsAdminCmd($"/delsub {param}");
         }
 
         private async void Preset_NotifyUsage_Click(object s, RoutedEventArgs e)
         {
-            var param = await PromptForInputAsync("notifyusage 参数", "请输入 notifyusage 参数（例如: /id:12345 /usage:1）");
+            var param = await PromptForInputAsync("NotifyUsageTitle", "NotifyUsageMessage");
             if (!string.IsNullOrEmpty(param)) await RunAsAdminCmd($"/notifyusage {param}");
         }
 
         private async void Preset_Export_Click(object s, RoutedEventArgs e)
         {
-            var param = await PromptForInputAsync("export 参数", "可选：输出文件路径或留空（将在当前工作目录生成）");
+            var param = await PromptForInputAsync("ExportTitle", "ExportMessage");
             await RunAsAdminCmd(string.IsNullOrEmpty(param) ? "/export" : $"/export \"{param}\"");
         }
+
         private async void Preset_Import_Click(object s, RoutedEventArgs e)
         {
-            var param = await PromptForInputAsync("import 参数", "请输入要导入的文件路径（必填）");
+            var param = await PromptForInputAsync("ImportTitle", "ImportMessage");
             if (!string.IsNullOrEmpty(param))
                 await RunAsAdminCmd($"/import \"{param}\"");
         }
@@ -153,36 +235,93 @@ namespace ViveToolWinUI.Pages
             var actionIndex = cmbAction.SelectedIndex;
             string verb = actionIndex switch { 0 => "enable", 1 => "disable", _ => "enable" };
             var featureId = txtFeatureId.Text?.Trim() ?? "";
-            if (string.IsNullOrEmpty(featureId)) { (App.MainWindow as MainWindow)?.ShowWarning("请输入 Feature ID"); return; }
-            if (!IsValidFeatureIdInput(featureId)) { (App.MainWindow as MainWindow)?.ShowError("Feature ID 格式无效"); return; }
+
+            if (string.IsNullOrEmpty(featureId))
+            {
+                (App.MainWindow as MainWindow)?.ShowWarning(LocalizationHelper.GetString("WarningEmptyFeatureId"));
+                return;
+            }
+            if (!IsValidFeatureIdInput(featureId))
+            {
+                (App.MainWindow as MainWindow)?.ShowError(LocalizationHelper.GetString("ErrorInvalidFeatureId"));
+                return;
+            }
 
             var normalized = NormalizeIds(featureId);
-
-            // Safety: reject obviously abusive/accidental long inputs to avoid vivetool hanging
             var parts = normalized.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length > 100) { (App.MainWindow as MainWindow)?.ShowError("指定的 Feature ID 数量太多"); return; }
+            if (parts.Length > 100)
+            {
+                (App.MainWindow as MainWindow)?.ShowError(LocalizationHelper.GetString("ErrorTooManyIds"));
+                return;
+            }
             foreach (var p in parts)
             {
-                // Normal feature IDs are 8 digits (e.g. 56848060). Reject inputs that are not 8 digits to avoid hangs.
-                if (p.Length != 8) { (App.MainWindow as MainWindow)?.ShowError("单个 Feature ID 长度应为 8 位（例如 56848060）"); return; }
+                if (p.Length != 8)
+                {
+                    (App.MainWindow as MainWindow)?.ShowError(LocalizationHelper.GetString("ErrorIdLength"));
+                    return;
+                }
             }
 
             var sb = new StringBuilder();
             sb.Append($"/{verb} /id:{normalized}");
             if (chkVerbose.IsChecked == true) sb.Append(" /verbose");
-            if (chkReboot.IsChecked == true) sb.Append(" /reboot");
 
             lvHistoryAdd($"{verb}|{normalized}");
             AppendLog($"将以管理员 CMD 执行: vivetool {sb}");
 
             await RunAsAdminCmd(sb.ToString());
+
+            if (chkReboot.IsChecked == true)
+            {
+                var contentBlock = new TextBlock
+                {
+                    Text = LocalizationHelper.GetString("RebootMessage"),
+                    TextWrapping = TextWrapping.Wrap
+                };
+
+                var confirmReboot = new ContentDialog
+                {
+                    Title = LocalizationHelper.GetString("RebootTitle"),
+                    Content = contentBlock,
+                    PrimaryButtonText = LocalizationHelper.GetString("RebootNow"),
+                    SecondaryButtonText = LocalizationHelper.GetString("RebootLater"),
+                    XamlRoot = this.XamlRoot
+                };
+
+                var result = await confirmReboot.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    try
+                    {
+                        var psi = new ProcessStartInfo
+                        {
+                            FileName = "shutdown.exe",
+                            Arguments = "/r /t 10 /c \"应用 ViveTool 更改后重启系统\"",
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        };
+                        Process.Start(psi);
+                        (App.MainWindow as MainWindow)?.ShowInfo(LocalizationHelper.GetString("InfoRebootScheduled"));
+                    }
+                    catch (Exception ex)
+                    {
+                        (App.MainWindow as MainWindow)?.ShowError(string.Format(LocalizationHelper.GetString("ErrorRebootFailed"), ex.Message));
+                    }
+                }
+            }
         }
 
         private async void RunCustom_Click(object sender, RoutedEventArgs e)
         {
             if (_isRunning) { _cts?.Cancel(); return; }
             var args = txtCustomArgs?.Text?.Trim() ?? "";
-            if (string.IsNullOrEmpty(args)) { (App.MainWindow as MainWindow)?.ShowWarning("请输入参数"); return; }
+
+            if (string.IsNullOrEmpty(args))
+            {
+                (App.MainWindow as MainWindow)?.ShowWarning(LocalizationHelper.GetString("WarningEmptyArgs"));
+                return;
+            }
             lvHistoryAdd($"custom|{args}");
             AppendLog($"将以管理员 CMD 执行: vivetool {args}");
             await RunAsAdminCmd(args);
@@ -377,25 +516,30 @@ namespace ViveToolWinUI.Pages
         #endregion
 
         #region 小工具：弹出输入对话
-        private async Task<string> PromptForInputAsync(string title, string message)
+        private async Task<string> PromptForInputAsync(string titleKey, string messageKey)
         {
             var tb = new TextBox { AcceptsReturn = false, PlaceholderText = "" };
+
             var panel = new StackPanel { Spacing = 8 };
-            panel.Children.Add(new TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });
+            var messageBlock = new TextBlock
+            {
+                Text = LocalizationHelper.GetString(messageKey),
+                TextWrapping = TextWrapping.Wrap
+            };
+            panel.Children.Add(messageBlock);
             panel.Children.Add(tb);
 
             var dlg = new ContentDialog
             {
-                Title = title,
+                Title = LocalizationHelper.GetString(titleKey),
                 Content = panel,
-                PrimaryButtonText = "确定",
-                CloseButtonText = "取消",
+                PrimaryButtonText = LocalizationHelper.GetString("DialogOK"),
+                CloseButtonText = LocalizationHelper.GetString("DialogCancel"),
                 XamlRoot = this.XamlRoot
             };
 
             var result = await dlg.ShowAsync();
-            if (result == ContentDialogResult.Primary) return tb.Text?.Trim() ?? "";
-            return "";
+            return result == ContentDialogResult.Primary ? tb.Text?.Trim() ?? "" : "";
         }
         #endregion
 
@@ -521,6 +665,26 @@ namespace ViveToolWinUI.Pages
             lock (s_logBuffer) { return s_logBuffer.ToString(); }
         }
 
+        private void LoadHistory()
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+            if (settings.Values.TryGetValue(HistoryKey, out var obj) && obj is string raw)
+            {
+                var items = raw.Split(new[] { ";;" }, StringSplitOptions.RemoveEmptyEntries);
+                _history.Clear();
+                _history.AddRange(items);
+                lvHistory.ItemsSource = null;
+                lvHistory.ItemsSource = _history;
+            }
+        }
+
+        private void SaveHistory()
+        {
+            var settings = ApplicationData.Current.LocalSettings;
+            var raw = string.Join(";;", _history);
+            settings.Values[HistoryKey] = raw;
+        }
+
         private void lvHistoryAdd(string entry)
         {
             if (!_history.Contains(entry))
@@ -529,6 +693,112 @@ namespace ViveToolWinUI.Pages
                 if (_history.Count > 50) _history.RemoveAt(_history.Count - 1);
                 lvHistory.ItemsSource = null;
                 lvHistory.ItemsSource = _history;
+                SaveHistory(); // 每次更新后保存
+            }
+        }
+        private async void BtnClearHistory_Click(object sender, RoutedEventArgs e)
+        {
+            var contentBlock = new TextBlock
+            {
+                Text = LocalizationHelper.GetString("ClearHistoryDialog.Content"),
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 0, 0, 16)
+            };
+
+            var confirm = new ContentDialog
+            {
+                Title = LocalizationHelper.GetString("ClearHistoryDialog.Title"),
+                Content = contentBlock,
+                PrimaryButtonText = LocalizationHelper.GetString("ClearHistoryDialog.PrimaryButtonText"),
+                CloseButtonText = LocalizationHelper.GetString("ClearHistoryDialog.CloseButtonText"),
+                XamlRoot = this.XamlRoot
+            };
+
+            if (await confirm.ShowAsync() == ContentDialogResult.Primary)
+            {
+                _history.Clear();
+                lvHistory.ItemsSource = null;
+                SaveHistory();
+            }
+        }
+
+        private void lvHistory_ContextFlyoutOpening(object sender, object e)
+        {
+            if (lvHistory.SelectedItem is string entry)
+            {
+                var flyout = (MenuFlyout)Resources["HistoryItemFlyout"];
+                var parts = entry.Split('|');
+                var verb = parts.Length > 0 ? parts[0] : "";
+
+                foreach (var item in flyout.Items)
+                    item.Visibility = Visibility.Collapsed;
+
+                if (verb == "enable")
+                {
+                    ((MenuFlyoutItem)flyout.Items[0]).Visibility = Visibility.Collapsed; // Enable 不需要再启用
+                    ((MenuFlyoutItem)flyout.Items[1]).Visibility = Visibility.Visible;   // 禁用
+                    ((MenuFlyoutItem)flyout.Items[2]).Visibility = Visibility.Visible;   // 恢复默认
+                }
+                else if (verb == "disable")
+                {
+                    ((MenuFlyoutItem)flyout.Items[0]).Visibility = Visibility.Visible;   // 启用
+                    ((MenuFlyoutItem)flyout.Items[1]).Visibility = Visibility.Collapsed;
+                    ((MenuFlyoutItem)flyout.Items[2]).Visibility = Visibility.Visible;   // 恢复默认
+                }
+                else if (verb == "reset")
+                {
+                    ((MenuFlyoutItem)flyout.Items[0]).Visibility = Visibility.Visible;   // 启用
+                    ((MenuFlyoutItem)flyout.Items[1]).Visibility = Visibility.Visible;   // 禁用
+                    ((MenuFlyoutItem)flyout.Items[2]).Visibility = Visibility.Collapsed; // 已经是默认
+                }
+                else
+                {
+                    // custom 或其他
+                    ((MenuFlyoutItem)flyout.Items[3]).Visibility = Visibility.Visible;   // 删除
+                }
+            }
+        }
+        private async void History_Enable_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvHistory.SelectedItem is string entry)
+            {
+                var id = entry.Split('|')[1];
+                await RunAsAdminCmd($"/enable /id:{id}");
+                // 写入历史
+                lvHistoryAdd($"enable|{id}");
+            }
+        }
+
+        private async void History_Disable_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvHistory.SelectedItem is string entry)
+            {
+                var id = entry.Split('|')[1];
+                await RunAsAdminCmd($"/disable /id:{id}");
+                // 写入历史
+                lvHistoryAdd($"disable|{id}");
+            }
+        }
+
+        private async void History_Reset_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvHistory.SelectedItem is string entry)
+            {
+                var id = entry.Split('|')[1];
+                await RunAsAdminCmd($"/reset /id:{id}");
+                // 写入历史
+                lvHistoryAdd($"reset|{id}");
+            }
+        }
+
+        private void History_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            if (lvHistory.SelectedItem is string entry)
+            {
+                _history.Remove(entry);
+                lvHistory.ItemsSource = null;
+                lvHistory.ItemsSource = _history;
+                SaveHistory();
             }
         }
         #endregion
