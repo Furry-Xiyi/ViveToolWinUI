@@ -1,0 +1,282 @@
+<Page
+    x:Class="ViveToolWinUI.Pages.FeatureIDFinderPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="24" MaxWidth="1200">
+
+            <!-- 标题 -->
+            <StackPanel Spacing="8">
+                <TextBlock x:Uid="IDFinder_Title" Style="{StaticResource TitleTextBlockStyle}"/>
+                <TextBlock x:Uid="IDFinder_Description" TextWrapping="Wrap" Opacity="0.7"/>
+            </StackPanel>
+
+            <!-- 系统信息卡片 -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                   CornerRadius="8" Padding="16">
+                <StackPanel Spacing="12">
+                    <TextBlock x:Uid="IDFinder_SystemInfo" FontWeight="SemiBold" FontSize="16"/>
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock x:Uid="IDFinder_WindowsVersion" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="TxtWindowsVersion" Grid.Column="1" TextWrapping="Wrap"/>
+
+                        <TextBlock x:Uid="IDFinder_BuildNumber" FontWeight="SemiBold" Grid.Row="1"/>
+                        <TextBlock x:Name="TxtBuildNumber" Grid.Row="1" Grid.Column="1"/>
+
+                        <TextBlock x:Uid="IDFinder_Architecture" FontWeight="SemiBold" Grid.Row="2"/>
+                        <TextBlock x:Name="TxtArchitecture" Grid.Row="2" Grid.Column="1"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- 查找选项 -->
+            <muxc:Expander x:Uid="IDFinder_Options" HorizontalAlignment="Stretch" IsExpanded="True">
+                <StackPanel Spacing="12" Padding="12">
+
+                    <TextBlock x:Uid="IDFinder_FilterLabel" FontWeight="SemiBold"/>
+
+                    <CheckBox x:Name="ChkShowEnabled" x:Uid="IDFinder_ShowEnabled" IsChecked="True"/>
+                    <CheckBox x:Name="ChkShowDisabled" x:Uid="IDFinder_ShowDisabled" IsChecked="True"/>
+                    <CheckBox x:Name="ChkShowDefault" x:Uid="IDFinder_ShowDefault" IsChecked="False"/>
+
+                    <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}" Margin="0,8"/>
+
+                    <TextBlock x:Uid="IDFinder_SortLabel" FontWeight="SemiBold"/>
+
+                    <muxc:RadioButtons x:Name="SortOptions">
+                        <RadioButton x:Uid="IDFinder_SortById" Tag="Id" IsChecked="True"/>
+                        <RadioButton x:Uid="IDFinder_SortByState" Tag="State"/>
+                    </muxc:RadioButtons>
+                </StackPanel>
+            </muxc:Expander>
+
+            <!-- 操作按钮 -->
+            <StackPanel Spacing="12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="BtnQuery" x:Uid="IDFinder_QueryButton"
+                            Click="Query_Click"
+                            Style="{StaticResource AccentButtonStyle}"
+                            MinWidth="150"/>
+
+                    <Button x:Name="BtnRefresh" x:Uid="IDFinder_RefreshButton"
+                            Click="Refresh_Click"
+                            Margin="12,0,0,0"
+                            Grid.Column="1"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="8" 
+                               HorizontalAlignment="Right" Grid.Column="3">
+                        <Button x:Name="BtnExportJson" x:Uid="IDFinder_ExportJson"
+                                Click="ExportJson_Click" IsEnabled="False"/>
+                        <Button x:Name="BtnExportCsv" x:Uid="IDFinder_ExportCsv"
+                                Click="ExportCsv_Click" IsEnabled="False"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 进度条 -->
+                <ProgressBar x:Name="ProgressBar" IsIndeterminate="False" Visibility="Collapsed"/>
+                <TextBlock x:Name="TxtStatus" x:Uid="IDFinder_StatusReady" 
+                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                          Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- 结果区域 -->
+            <Border x:Name="ResultsPanel" Visibility="Collapsed"
+                   Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                   CornerRadius="8" Padding="16">
+                <StackPanel Spacing="16">
+
+                    <!-- 统计信息 -->
+                    <Grid>
+                        <TextBlock x:Uid="IDFinder_Results" Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="24" HorizontalAlignment="Right">
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Uid="IDFinder_TotalCount" FontSize="12" Opacity="0.7"/>
+                                <TextBlock x:Name="TxtTotalCount" FontSize="20" FontWeight="SemiBold"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Uid="IDFinder_EnabledCount" FontSize="12" Opacity="0.7"/>
+                                <TextBlock x:Name="TxtEnabledCount" FontSize="20" FontWeight="SemiBold" 
+                                          Foreground="#4CAF50"/>
+                            </StackPanel>
+
+                            <StackPanel Spacing="4">
+                                <TextBlock x:Uid="IDFinder_DisabledCount" FontSize="12" Opacity="0.7"/>
+                                <TextBlock x:Name="TxtDisabledCount" FontSize="20" FontWeight="SemiBold" 
+                                          Foreground="#F44336"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+
+                    <!-- 搜索框 -->
+                    <AutoSuggestBox x:Name="SearchBox" 
+                                   x:Uid="IDFinder_SearchBox"
+                                   PlaceholderText="Search Feature ID..."
+                                   QueryIcon="Find"
+                                   TextChanged="Search_TextChanged"/>
+
+                    <!-- 功能列表 -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="300"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 左侧列表 -->
+                        <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                               BorderThickness="1" CornerRadius="4">
+                            <ListView x:Name="FeaturesListView"
+                                     SelectionMode="Single"
+                                     SelectionChanged="Features_SelectionChanged"
+                                     MaxHeight="500">
+                                <ListView.Header>
+                                    <Grid Padding="12,8" 
+                                         Background="{ThemeResource LayerFillColorDefaultBrush}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="120"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock x:Uid="IDFinder_HeaderID" FontWeight="SemiBold"/>
+                                        <TextBlock x:Uid="IDFinder_HeaderState" FontWeight="SemiBold" 
+                                                  Grid.Column="1"/>
+                                        <TextBlock x:Uid="IDFinder_HeaderActions" FontWeight="SemiBold" 
+                                                  Grid.Column="2" TextAlignment="Center"/>
+                                    </Grid>
+                                </ListView.Header>
+
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="12,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="120"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="{Binding Id}" 
+                                                      FontFamily="Consolas"
+                                                      VerticalAlignment="Center"/>
+
+                                            <Border Grid.Column="1"
+                                                   Background="{Binding StatusBrush}"
+                                                   CornerRadius="4"
+                                                   Padding="12,4"
+                                                   HorizontalAlignment="Left"
+                                                   Margin="8,0">
+                                                <TextBlock Text="{Binding StatusText}"
+                                                          Foreground="White"
+                                                          FontSize="12"
+                                                          FontWeight="SemiBold"/>
+                                            </Border>
+
+                                            <Button Grid.Column="2"
+                                                   Content="⚡"
+                                                   FontSize="16"
+                                                   Click="QuickAction_Click"
+                                                   Tag="{Binding}"
+                                                   HorizontalAlignment="Center"
+                                                   ToolTipService.ToolTip="Quick Enable/Disable"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                            </ListView>
+                        </Border>
+
+                        <!-- 右侧详情面板 -->
+                        <Border Grid.Column="1" Margin="16,0,0,0"
+                               Background="{ThemeResource LayerFillColorDefaultBrush}"
+                               CornerRadius="8" Padding="16">
+                            <ScrollViewer MaxHeight="500">
+                                <StackPanel x:Name="DetailPanel" Spacing="16">
+                                    <TextBlock x:Uid="IDFinder_SelectedFeature" 
+                                              Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                                    <StackPanel Spacing="12">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock x:Uid="IDFinder_DetailID" FontWeight="SemiBold"/>
+                                            <Border Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                                                   CornerRadius="4" Padding="8">
+                                                <TextBlock x:Name="TxtDetailId" 
+                                                          FontFamily="Consolas"
+                                                          IsTextSelectionEnabled="True"/>
+                                            </Border>
+                                        </StackPanel>
+
+                                        <StackPanel Spacing="4">
+                                            <TextBlock x:Uid="IDFinder_DetailState" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="TxtDetailState"/>
+                                        </StackPanel>
+
+                                        <StackPanel Spacing="4">
+                                            <TextBlock x:Uid="IDFinder_DetailValue" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="TxtDetailValue" FontFamily="Consolas"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <Border Height="1" Background="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+
+                                    <!-- 操作按钮 -->
+                                    <StackPanel Spacing="8">
+                                        <Button x:Name="BtnEnable" x:Uid="IDFinder_EnableButton"
+                                               Click="Enable_Click"
+                                               HorizontalAlignment="Stretch"
+                                               Style="{StaticResource AccentButtonStyle}"/>
+
+                                        <Button x:Name="BtnDisable" x:Uid="IDFinder_DisableButton"
+                                               Click="Disable_Click"
+                                               HorizontalAlignment="Stretch"/>
+
+                                        <Button x:Name="BtnReset" x:Uid="IDFinder_ResetButton"
+                                               Click="Reset_Click"
+                                               HorizontalAlignment="Stretch"/>
+
+                                        <Button x:Name="BtnCopyId" x:Uid="IDFinder_CopyButton"
+                                               Click="CopyId_Click"
+                                               HorizontalAlignment="Stretch">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <FontIcon Glyph="&#xE8C8;" FontSize="14"/>
+                                                <TextBlock x:Uid="IDFinder_CopyButtonText"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</Page>
