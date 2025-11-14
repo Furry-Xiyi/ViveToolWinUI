@@ -7,17 +7,28 @@
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
 		<RootNamespace>ViveToolWinUI</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Platforms>x86;x64;ARM64</Platforms>
-		<!-- 同时支持 win-x64 和 win-arm64 -->
+
+		<!-- IDE 配置菜单 -->
+		<Platforms>x64;ARM64</Platforms>
+
+		<!-- 打包器 -->
 		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
+
 		<UseWinUI>true</UseWinUI>
-		<WinUISDKReferences>false</WinUISDKReferences>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<Nullable>enable</Nullable>
-	</PropertyGroup>
 
+		<!-- NativeAOT -->
+		<IsAotCompatible>true</IsAotCompatible>
+		<PublishAot>true</PublishAot>
+
+		<!-- 商店发布 -->
+		<SelfContained>false</SelfContained>
+	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="Assets\SplashScreen.scale-200.png" />
+		<Content Include="Assets\SplashScreen.scale-200.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Assets\LockScreenLogo.scale-200.png" />
 		<Content Include="Assets\Square150x150Logo.scale-200.png" />
 		<Content Include="Assets\Square44x44Logo.scale-200.png" />
@@ -44,6 +55,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Update="Assets\SplashScreen.scale-100.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\SplashScreen.scale-125.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\SplashScreen.scale-150.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Assets\SplashScreen.scale-400.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Update="Assets\ViveTool\Albacore.ViVe.dll">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -79,10 +102,11 @@
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
-		<AppxBundle>Auto</AppxBundle>
+		<AppxBundle>Never</AppxBundle>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<DelaySign>True</DelaySign>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
+		<ApplicationIcon>Assets\AppIcon.ico</ApplicationIcon>
 	</PropertyGroup>
 </Project>

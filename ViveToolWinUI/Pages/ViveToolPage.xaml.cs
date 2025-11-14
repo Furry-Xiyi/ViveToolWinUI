@@ -7,8 +7,10 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,10 +22,18 @@ namespace ViveToolWinUI.Pages
     public sealed partial class ViveToolPage : Page
     {
         private static readonly StringBuilder s_logBuffer = new();
-        private readonly List<string> _history = new();
+        public sealed class HistoryEntry
+        {
+            public string Verb { get; set; } = "";     // enable/disable/reset/custom
+            public string Args { get; set; } = "";     // 例如 "12345678,87654321" 或 "/query"
+            public string Raw => $"{Verb}|{Args}";
+        }
+
+        private readonly ObservableCollection<HistoryEntry> _history = new();
         private const string HistoryKey = "RecentHistory";
         private CancellationTokenSource? _cts;
         private bool _isRunning = false;
+        private HistoryEntry? _selectedHistory;
 
         public ViveToolPage()
         {
@@ -31,7 +41,6 @@ namespace ViveToolWinUI.Pages
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
 
             cmbAction.SelectedIndex = 0;
-            lvHistory.SelectionChanged += LvHistory_SelectionChanged;
 
             this.Loaded += (_, __) =>
             {
@@ -65,16 +74,6 @@ namespace ViveToolWinUI.Pages
         }
         #endregion
 
-        private void LvHistory_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            if (lvHistory.SelectedItem is string item)
-            {
-                var parts = item.Split('|');
-                if (parts.Length >= 1) cmbAction.SelectedIndex = parts[0] == "enable" ? 0 : 1;
-                if (parts.Length >= 2) txtFeatureId.Text = parts[1];
-            }
-        }
-
         private string GetViveToolFolder()
         {
             return Path.Combine(ApplicationData.Current.LocalFolder.Path, "ViveTool");
@@ -86,43 +85,26 @@ namespace ViveToolWinUI.Pages
         }
         private void lvHistory_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            var fe = e.OriginalSource as FrameworkElement;
-            if (fe?.DataContext is string clickedItem)
-            {
-                lvHistory.SelectedItem = clickedItem;
-            }
-
-            var selectedItem = lvHistory.SelectedItem as string;
-            if (selectedItem == null)
-            {
-                return;
-            }
+            if (_selectedHistory == null) return;
 
             var flyout = new MenuFlyout();
 
-            // 启用
             var enableItem = new MenuFlyoutItem { Text = LocalizationHelper.GetString("HistoryMenu.Enable.Text") };
             enableItem.Click += History_Enable_Click;
-            if (IsItemEnabled(selectedItem))
-                enableItem.IsEnabled = false;
+            if (_selectedHistory.Verb == "enable") enableItem.IsEnabled = false;
             flyout.Items.Add(enableItem);
 
-            // 禁用
             var disableItem = new MenuFlyoutItem { Text = LocalizationHelper.GetString("HistoryMenu.Disable.Text") };
             disableItem.Click += History_Disable_Click;
-            if (IsItemDisabled(selectedItem))
-                disableItem.IsEnabled = false;
+            if (_selectedHistory.Verb == "disable") disableItem.IsEnabled = false;
             flyout.Items.Add(disableItem);
 
-            // 恢复默认
             var resetItem = new MenuFlyoutItem { Text = LocalizationHelper.GetString("HistoryMenu.Reset.Text") };
             resetItem.Click += History_Reset_Click;
             flyout.Items.Add(resetItem);
 
-            // 分隔线
             flyout.Items.Add(new MenuFlyoutSeparator());
 
-            // 删除
             var deleteItem = new MenuFlyoutItem
             {
                 Text = LocalizationHelper.GetString("HistoryMenu.Delete.Text"),
@@ -131,7 +113,7 @@ namespace ViveToolWinUI.Pages
             deleteItem.Click += History_Delete_Click;
             flyout.Items.Add(deleteItem);
 
-            flyout.ShowAt(lvHistory, e.GetPosition(lvHistory));
+            flyout.ShowAt(sender as FrameworkElement, e.GetPosition(sender as FrameworkElement));
         }
         private string GetLocalizedString(ResourceLoader loader, string key, string fallback)
         {
@@ -672,29 +654,63 @@ namespace ViveToolWinUI.Pages
             {
                 var items = raw.Split(new[] { ";;" }, StringSplitOptions.RemoveEmptyEntries);
                 _history.Clear();
-                _history.AddRange(items);
-                lvHistory.ItemsSource = null;
-                lvHistory.ItemsSource = _history;
+                foreach (var s in items)
+                {
+                    var parts = s.Split('|');
+                    var verb = parts.Length > 0 ? parts[0] : "";
+                    var args = parts.Length > 1 ? parts[1] : "";
+                    _history.Add(new HistoryEntry { Verb = verb, Args = args });
+                }
+            }
+            RefreshHistoryUI();
+        }
+        private void RefreshHistoryUI()
+        {
+            historyPanel.Children.Clear();
+            foreach (var item in _history)
+            {
+                var sp = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+
+                var verbBlock = new TextBlock { Text = item.Verb, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold };
+                var sepBlock = new TextBlock { Text = "|", Foreground = new SolidColorBrush(Colors.Gray) };
+                var argsBlock = new TextBlock { Text = item.Args };
+
+                sp.Children.Add(verbBlock);
+                sp.Children.Add(sepBlock);
+                sp.Children.Add(argsBlock);
+
+                // 挂右键菜单事件
+                sp.RightTapped += (s, e) =>
+                {
+                    lvHistory_RightTapped(s, e);
+                    // 把当前项设为选中
+                    _selectedHistory = item;
+                };
+
+                historyPanel.Children.Add(sp);
             }
         }
 
         private void SaveHistory()
         {
             var settings = ApplicationData.Current.LocalSettings;
-            var raw = string.Join(";;", _history);
+            var raw = string.Join(";;", _history.Select(h => h.Raw));
             settings.Values[HistoryKey] = raw;
         }
 
         private void lvHistoryAdd(string entry)
         {
-            if (!_history.Contains(entry))
-            {
-                _history.Insert(0, entry);
-                if (_history.Count > 50) _history.RemoveAt(_history.Count - 1);
-                lvHistory.ItemsSource = null;
-                lvHistory.ItemsSource = _history;
-                SaveHistory(); // 每次更新后保存
-            }
+            var parts = entry.Split('|');
+            var verb = parts.Length > 0 ? parts[0] : "";
+            var args = parts.Length > 1 ? parts[1] : "";
+
+            if (_history.Any(h => h.Raw == entry)) return;
+
+            _history.Insert(0, new HistoryEntry { Verb = verb, Args = args });
+            if (_history.Count > 50) _history.RemoveAt(_history.Count - 1);
+
+            SaveHistory();
+            RefreshHistoryUI();
         }
         private async void BtnClearHistory_Click(object sender, RoutedEventArgs e)
         {
@@ -717,88 +733,46 @@ namespace ViveToolWinUI.Pages
             if (await confirm.ShowAsync() == ContentDialogResult.Primary)
             {
                 _history.Clear();
-                lvHistory.ItemsSource = null;
                 SaveHistory();
+                RefreshHistoryUI(); // 手动刷新 UI
             }
         }
 
-        private void lvHistory_ContextFlyoutOpening(object sender, object e)
-        {
-            if (lvHistory.SelectedItem is string entry)
-            {
-                var flyout = (MenuFlyout)Resources["HistoryItemFlyout"];
-                var parts = entry.Split('|');
-                var verb = parts.Length > 0 ? parts[0] : "";
 
-                foreach (var item in flyout.Items)
-                    item.Visibility = Visibility.Collapsed;
-
-                if (verb == "enable")
-                {
-                    ((MenuFlyoutItem)flyout.Items[0]).Visibility = Visibility.Collapsed; // Enable 不需要再启用
-                    ((MenuFlyoutItem)flyout.Items[1]).Visibility = Visibility.Visible;   // 禁用
-                    ((MenuFlyoutItem)flyout.Items[2]).Visibility = Visibility.Visible;   // 恢复默认
-                }
-                else if (verb == "disable")
-                {
-                    ((MenuFlyoutItem)flyout.Items[0]).Visibility = Visibility.Visible;   // 启用
-                    ((MenuFlyoutItem)flyout.Items[1]).Visibility = Visibility.Collapsed;
-                    ((MenuFlyoutItem)flyout.Items[2]).Visibility = Visibility.Visible;   // 恢复默认
-                }
-                else if (verb == "reset")
-                {
-                    ((MenuFlyoutItem)flyout.Items[0]).Visibility = Visibility.Visible;   // 启用
-                    ((MenuFlyoutItem)flyout.Items[1]).Visibility = Visibility.Visible;   // 禁用
-                    ((MenuFlyoutItem)flyout.Items[2]).Visibility = Visibility.Collapsed; // 已经是默认
-                }
-                else
-                {
-                    // custom 或其他
-                    ((MenuFlyoutItem)flyout.Items[3]).Visibility = Visibility.Visible;   // 删除
-                }
-            }
-        }
         private async void History_Enable_Click(object sender, RoutedEventArgs e)
         {
-            if (lvHistory.SelectedItem is string entry)
+            if (_selectedHistory != null && !string.IsNullOrEmpty(_selectedHistory.Args))
             {
-                var id = entry.Split('|')[1];
-                await RunAsAdminCmd($"/enable /id:{id}");
-                // 写入历史
-                lvHistoryAdd($"enable|{id}");
+                await RunAsAdminCmd($"/enable /id:{_selectedHistory.Args}");
+                lvHistoryAdd($"enable|{_selectedHistory.Args}");
             }
         }
 
         private async void History_Disable_Click(object sender, RoutedEventArgs e)
         {
-            if (lvHistory.SelectedItem is string entry)
+            if (_selectedHistory != null && !string.IsNullOrEmpty(_selectedHistory.Args))
             {
-                var id = entry.Split('|')[1];
-                await RunAsAdminCmd($"/disable /id:{id}");
-                // 写入历史
-                lvHistoryAdd($"disable|{id}");
+                await RunAsAdminCmd($"/disable /id:{_selectedHistory.Args}");
+                lvHistoryAdd($"disable|{_selectedHistory.Args}");
             }
         }
 
         private async void History_Reset_Click(object sender, RoutedEventArgs e)
         {
-            if (lvHistory.SelectedItem is string entry)
+            if (_selectedHistory != null && !string.IsNullOrEmpty(_selectedHistory.Args))
             {
-                var id = entry.Split('|')[1];
-                await RunAsAdminCmd($"/reset /id:{id}");
-                // 写入历史
-                lvHistoryAdd($"reset|{id}");
+                await RunAsAdminCmd($"/reset /id:{_selectedHistory.Args}");
+                lvHistoryAdd($"reset|{_selectedHistory.Args}");
             }
         }
 
         private void History_Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (lvHistory.SelectedItem is string entry)
+            if (_selectedHistory != null)
             {
-                _history.Remove(entry);
-                lvHistory.ItemsSource = null;
-                lvHistory.ItemsSource = _history;
+                _history.Remove(_selectedHistory);
                 SaveHistory();
+                RefreshHistoryUI();
             }
         }
         #endregion

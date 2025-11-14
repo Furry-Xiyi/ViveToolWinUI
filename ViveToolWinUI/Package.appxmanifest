@@ -5,12 +5,13 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
+  IgnorableNamespaces="uap rescap iot">
 
   <Identity
     Name="6BABD18E.ViveToolWinUI"
     Publisher="CN=1D20BDA0-45B9-4AE2-B595-48FAEE1F3DC1"
-    Version="1.1.0.0" />
+    Version="1.1.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="ff3cdb73-5002-47b5-b8a1-518b50758162" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -49,5 +50,6 @@
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
     <Capability Name="internetClient"/>
+    <iot:Capability Name="systemManagement"/>
   </Capabilities>
 </Package>

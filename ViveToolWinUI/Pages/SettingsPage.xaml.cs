@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -12,6 +13,10 @@ using Windows.System;
 
 namespace ViveToolWinUI.Pages
 {
+    [JsonSerializable(typeof(Dictionary<string, string>))]
+    public partial class SettingsJsonContext : JsonSerializerContext
+    {
+    }
     public sealed partial class SettingsPage : Page
     {
         private ApplicationDataContainer S => ApplicationData.Current.LocalSettings;
@@ -372,12 +377,22 @@ namespace ViveToolWinUI.Pages
             {
                 var dst = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
                     $"ViveTool_Settings_{DateTime.Now:yyyyMMdd_HHmmss}.json");
-                var dict = new Dictionary<string, object>();
-                foreach (var kv in S.Values) dict[kv.Key] = kv.Value;
-                await File.WriteAllTextAsync(dst, JsonSerializer.Serialize(dict, new JsonSerializerOptions { WriteIndented = true }));
+
+                var dict = new Dictionary<string, string>();
+                foreach (var kv in S.Values)
+                {
+                    dict[kv.Key] = kv.Value?.ToString() ?? "";
+                }
+
+                var json = JsonSerializer.Serialize(dict, SettingsJsonContext.Default.DictionaryStringString);
+                await File.WriteAllTextAsync(dst, json);
+
                 ShowSuccess("已导出到桌面");
             }
-            catch (Exception ex) { ShowError($"导出失败: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                ShowError($"导出失败: {ex.Message}");
+            }
         }
 
         private async void BtnImportSettings_Click(object sender, RoutedEventArgs e)
@@ -404,26 +419,22 @@ namespace ViveToolWinUI.Pages
             try
             {
                 var text = await FileIO.ReadTextAsync(file);
-                var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(text);
+                var dict = JsonSerializer.Deserialize(text, SettingsJsonContext.Default.DictionaryStringString);
+
                 if (dict != null)
                 {
                     foreach (var kv in dict)
                     {
-                        try
-                        {
-                            if (kv.Value.ValueKind == JsonValueKind.String)
-                                S.Values[kv.Key] = kv.Value.GetString();
-                            else if (kv.Value.ValueKind == JsonValueKind.Number)
-                                S.Values[kv.Key] = kv.Value.GetDouble();
-                            else if (kv.Value.ValueKind == JsonValueKind.True || kv.Value.ValueKind == JsonValueKind.False)
-                                S.Values[kv.Key] = kv.Value.GetBoolean();
-                        }
-                        catch { }
+                        S.Values[kv.Key] = kv.Value;
                     }
                 }
+
                 ShowSuccess("导入成功（建议重启应用）");
             }
-            catch (Exception ex) { ShowError($"导入失败: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                ShowError($"导入失败: {ex.Message}");
+            }
         }
 
         private async void BtnResetSettings_Click(object sender, RoutedEventArgs e)

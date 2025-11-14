@@ -186,9 +186,9 @@
             HorizontalAlignment="Right"
             Click="BtnClearHistory_Click"/>
                     </StackPanel>
-
-                    <ListView x:Name="lvHistory" MaxHeight="160" SelectionMode="Single"
-          RightTapped="lvHistory_RightTapped"/>
+                    <ScrollViewer MaxHeight="160">
+                        <StackPanel x:Name="historyPanel" />
+                    </ScrollViewer>
                 </StackPanel>
             </Border>
 

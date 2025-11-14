@@ -87,19 +87,31 @@ namespace ViveToolWinUI
             var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
             _appWindow = AppWindow.GetFromWindowId(windowId)!;
 
+            // 设置窗口大小
             try { _appWindow.Resize(new SizeInt32(1100, 720)); }
             catch { _appWindow.Resize(new SizeInt32(1100, 720)); }
 
+            // 设置任务栏和预览窗口图标（必须传完整路径）
+            string iconPath = Path.Combine(
+                Windows.ApplicationModel.Package.Current.InstalledLocation.Path,
+                "Assets",
+                "AppIcon.ico");
+            if (File.Exists(iconPath))
+            {
+                _appWindow.SetIcon(iconPath);
+            }
+
+            // 自定义标题栏
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(AppTitleBar);
 
             var tb = _appWindow.TitleBar;
             tb.ExtendsContentIntoTitleBar = true;
             tb.PreferredHeightOption = TitleBarHeightOption.Tall;
-            tb.BackgroundColor = Microsoft.UI.Colors.Transparent;
-            tb.InactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
-            tb.ButtonBackgroundColor = Microsoft.UI.Colors.Transparent;
-            tb.ButtonInactiveBackgroundColor = Microsoft.UI.Colors.Transparent;
+            tb.BackgroundColor = Colors.Transparent;
+            tb.InactiveBackgroundColor = Colors.Transparent;
+            tb.ButtonBackgroundColor = Colors.Transparent;
+            tb.ButtonInactiveBackgroundColor = Colors.Transparent;
             tb.ButtonHoverBackgroundColor = ColorHelper.FromArgb(32, 255, 255, 255);
             tb.ButtonPressedBackgroundColor = ColorHelper.FromArgb(64, 255, 255, 255);
 
@@ -107,6 +119,7 @@ namespace ViveToolWinUI
             RootLayout.Loaded += (_, __) => UpdateTitleBarDragRegions();
             _appWindow.Changed += (_, __) => DispatcherQueue.TryEnqueue(UpdateTitleBarDragRegions);
 
+            // 限制最小窗口大小
             SubclassWindowForMinSize(hwnd);
 
             // 应用首次启动时，强制复制一次
@@ -116,7 +129,6 @@ namespace ViveToolWinUI
             var auto = (bool?)(ApplicationData.Current.LocalSettings.Values["AutoUpdateViveTool"]) ?? true;
             if (auto)
             {
-                // 静默后台检测：只有发现新版本时才弹窗提示
                 DispatcherQueue.TryEnqueue(async () =>
                 {
                     try
@@ -130,13 +142,18 @@ namespace ViveToolWinUI
                 });
             }
 
+            // 默认选中导航菜单第一项
             NavView.SelectedItem = NavView.MenuItems[0];
 
+            // 应用背景和主题
             ApplyBackdropFromSettings();
             UpdateTitleBarButtonsForTheme((Content as FrameworkElement)?.RequestedTheme ?? ElementTheme.Default);
 
+            // RootLayout 加载后：更新拖拽区域 + 启动定时器隐藏 Toast
             RootLayout.Loaded += (_, __) =>
             {
+                UpdateTitleBarDragRegions();
+
                 _infoTimer = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread().CreateTimer();
                 _infoTimer.Interval = TimeSpan.FromSeconds(2);
                 _infoTimer.Tick += (s, ev) =>
