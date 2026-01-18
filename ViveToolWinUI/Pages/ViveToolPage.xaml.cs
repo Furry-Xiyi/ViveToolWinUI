@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -21,17 +22,86 @@ namespace ViveToolWinUI.Pages
     {
         private readonly ObservableCollection<HistoryItem> _history = new();
         private const string HistoryKey = "CommandHistory";
+        private ListView? _dynamicListView;
 
         public ViveToolPage()
         {
             InitializeComponent();
+            LoadHistory();
             Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
-            LoadHistory();
-            LvHistory.ItemsSource = _history;
+            // 延迟确保页面完全加载
+            await Task.Delay(100);
+
+            // 在 UI 线程上动态创建 ListView
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                try
+                {
+                    CreateHistoryListViewDynamically();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ViveToolPage] Dynamic ListView creation failed: {ex.Message}");
+                    ShowError($"Failed to initialize history view: {ex.Message}");
+                }
+            });
+        }
+
+        private void CreateHistoryListViewDynamically()
+        {
+            // 查找历史记录容器
+            var historyContainer = this.FindName("HistoryContainer") as StackPanel;
+            if (historyContainer == null)
+            {
+                Debug.WriteLine("[ViveToolPage] HistoryContainer not found!");
+                return;
+            }
+
+            // 创建 ListView
+            _dynamicListView = new ListView
+            {
+                MaxHeight = 200,
+                SelectionMode = ListViewSelectionMode.Single,
+                IsItemClickEnabled = true
+            };
+
+            // 创建 ItemTemplate
+            var dataTemplate = CreateHistoryItemTemplate();
+            _dynamicListView.ItemTemplate = dataTemplate;
+
+            // 注册事件
+            _dynamicListView.ItemClick += History_ItemClick;
+
+            // 直接添加项，避免 ItemsSource 的 COM 互操作问题
+            foreach (var item in _history)
+            {
+                _dynamicListView.Items.Add(item);
+            }
+
+            // 添加到容器
+            historyContainer.Children.Add(_dynamicListView);
+        }
+
+        private DataTemplate CreateHistoryItemTemplate()
+        {
+            // 使用 XamlReader 创建 DataTemplate
+            var xaml = @"
+<DataTemplate xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation"">
+    <Grid Padding=""8"">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=""100""/>
+            <ColumnDefinition Width=""*""/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text=""{Binding Verb}"" FontWeight=""SemiBold"" Grid.Column=""0""/>
+        <TextBlock Text=""{Binding Args}"" TextTrimming=""CharacterEllipsis"" Grid.Column=""1""/>
+    </Grid>
+</DataTemplate>";
+
+            return (DataTemplate)Microsoft.UI.Xaml.Markup.XamlReader.Load(xaml);
         }
 
         // 快速命令
@@ -340,34 +410,55 @@ exit $LASTEXITCODE
 
         private void LoadHistory()
         {
-            var settings = ApplicationData.Current.LocalSettings;
-            if (settings.Values.TryGetValue(HistoryKey, out var obj) && obj is string raw)
+            try
             {
-                var items = raw.Split(";;", StringSplitOptions.RemoveEmptyEntries);
-                foreach (var item in items.Take(20))
+                var settings = ApplicationData.Current.LocalSettings;
+                if (settings.Values.TryGetValue(HistoryKey, out var obj) && obj is string raw)
                 {
-                    var parts = item.Split('|');
-                    if (parts.Length == 2)
-                        _history.Add(new HistoryItem { Verb = parts[0], Args = parts[1] });
+                    var items = raw.Split(";;", StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var item in items.Take(20))
+                    {
+                        var parts = item.Split('|');
+                        if (parts.Length == 2)
+                            _history.Add(new HistoryItem { Verb = parts[0], Args = parts[1] });
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ViveToolPage] LoadHistory failed: {ex.Message}");
             }
         }
 
         private void AddHistory(string verb, string args)
         {
-            var existing = _history.FirstOrDefault(h => h.Verb == verb && h.Args == args);
-            if (existing != null) _history.Remove(existing);
+            try
+            {
+                var existing = _history.FirstOrDefault(h => h.Verb == verb && h.Args == args);
+                if (existing != null) _history.Remove(existing);
 
-            _history.Insert(0, new HistoryItem { Verb = verb, Args = args });
-            while (_history.Count > 20) _history.RemoveAt(_history.Count - 1);
+                _history.Insert(0, new HistoryItem { Verb = verb, Args = args });
+                while (_history.Count > 20) _history.RemoveAt(_history.Count - 1);
 
-            SaveHistory();
+                SaveHistory();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ViveToolPage] AddHistory failed: {ex.Message}");
+            }
         }
 
         private void SaveHistory()
         {
-            var raw = string.Join(";;", _history.Select(h => $"{h.Verb}|{h.Args}"));
-            ApplicationData.Current.LocalSettings.Values[HistoryKey] = raw;
+            try
+            {
+                var raw = string.Join(";;", _history.Select(h => $"{h.Verb}|{h.Args}"));
+                ApplicationData.Current.LocalSettings.Values[HistoryKey] = raw;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[ViveToolPage] SaveHistory failed: {ex.Message}");
+            }
         }
 
         private string GetViveToolFolder()

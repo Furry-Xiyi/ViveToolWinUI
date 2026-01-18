@@ -29,10 +29,10 @@
   </data>
 
   <!-- ViveTool 页面 -->
-  <data name="ViveTool_Title" xml:space="preserve">
+  <data name="ViveTool_Title.Text" xml:space="preserve">
     <value>ViveTool 快速操作</value>
   </data>
-  <data name="ViveTool_QuickCommands" xml:space="preserve">
+  <data name="ViveTool_QuickCommands.Text" xml:space="preserve">
     <value>快速命令</value>
   </data>
   <data name="ViveTool_Query.Content" xml:space="preserve">
@@ -72,7 +72,7 @@
     <value>修复优先级</value>
   </data>
   
-  <data name="ViveTool_FeatureManagement" xml:space="preserve">
+  <data name="ViveTool_FeatureManagement.Text" xml:space="preserve">
     <value>功能管理</value>
   </data>
   <data name="ViveTool_FeatureIdBox.PlaceholderText" xml:space="preserve">
@@ -91,7 +91,7 @@
     <value>执行后自动重启</value>
   </data>
   
-  <data name="ViveTool_CustomCommand" xml:space="preserve">
+  <data name="ViveTool_CustomCommand.Text" xml:space="preserve">
     <value>自定义命令</value>
   </data>
   <data name="ViveTool_CustomBox.PlaceholderText" xml:space="preserve">
@@ -104,7 +104,7 @@
     <value>查看输出</value>
   </data>
   
-  <data name="ViveTool_History" xml:space="preserve">
+  <data name="ViveTool_History.Text" xml:space="preserve">
     <value>命令历史</value>
   </data>
   <data name="ViveTool_ClearHistory.Content" xml:space="preserve">
@@ -176,29 +176,29 @@
   </data>
 
   <!-- ID 查找器页面 -->
-  <data name="IDFinder_Title" xml:space="preserve">
+  <data name="IDFinder_Title.Text" xml:space="preserve">
     <value>查找可用 Feature ID</value>
   </data>
-  <data name="IDFinder_Description" xml:space="preserve">
+  <data name="IDFinder_Description.Text" xml:space="preserve">
     <value>查询系统中所有可用的 Windows 功能 ID 及其当前状态</value>
   </data>
-  <data name="IDFinder_SystemInfo" xml:space="preserve">
+  <data name="IDFinder_SystemInfo.Text" xml:space="preserve">
     <value>系统信息</value>
   </data>
-  <data name="IDFinder_WindowsVersion" xml:space="preserve">
+  <data name="IDFinder_WindowsVersion.Text" xml:space="preserve">
     <value>Windows 版本</value>
   </data>
-  <data name="IDFinder_BuildNumber" xml:space="preserve">
+  <data name="IDFinder_BuildNumber.Text" xml:space="preserve">
     <value>内部版本号</value>
   </data>
-  <data name="IDFinder_Architecture" xml:space="preserve">
+  <data name="IDFinder_Architecture.Text" xml:space="preserve">
     <value>系统架构</value>
   </data>
   
   <data name="IDFinder_Options.Header" xml:space="preserve">
     <value>查找选项</value>
   </data>
-  <data name="IDFinder_FilterLabel" xml:space="preserve">
+  <data name="IDFinder_FilterLabel.Text" xml:space="preserve">
     <value>显示筛选</value>
   </data>
   <data name="IDFinder_ShowEnabled.Content" xml:space="preserve">
@@ -210,7 +210,7 @@
   <data name="IDFinder_ShowDefault.Content" xml:space="preserve">
     <value>显示默认状态的功能</value>
   </data>
-  <data name="IDFinder_SortLabel" xml:space="preserve">
+  <data name="IDFinder_SortLabel.Text" xml:space="preserve">
     <value>排序方式</value>
   </data>
   <data name="IDFinder_SortById.Content" xml:space="preserve">
@@ -233,7 +233,7 @@
     <value>导出 CSV</value>
   </data>
   
-  <data name="IDFinder_StatusReady" xml:space="preserve">
+  <data name="IDFinder_StatusReady.Text" xml:space="preserve">
     <value>就绪</value>
   </data>
   <data name="IDFinder_StatusQuerying" xml:space="preserve">
@@ -246,42 +246,42 @@
     <value>查询失败</value>
   </data>
   
-  <data name="IDFinder_Results" xml:space="preserve">
+  <data name="IDFinder_Results.Text" xml:space="preserve">
     <value>查询结果</value>
   </data>
-  <data name="IDFinder_TotalCount" xml:space="preserve">
+  <data name="IDFinder_TotalCount.Text" xml:space="preserve">
     <value>总数</value>
   </data>
-  <data name="IDFinder_EnabledCount" xml:space="preserve">
+  <data name="IDFinder_EnabledCount.Text" xml:space="preserve">
     <value>已启用</value>
   </data>
-  <data name="IDFinder_DisabledCount" xml:space="preserve">
+  <data name="IDFinder_DisabledCount.Text" xml:space="preserve">
     <value>已禁用</value>
   </data>
   
   <data name="IDFinder_SearchBox.PlaceholderText" xml:space="preserve">
     <value>搜索 Feature ID...</value>
   </data>
-  <data name="IDFinder_HeaderID" xml:space="preserve">
+  <data name="IDFinder_HeaderID.Text" xml:space="preserve">
     <value>Feature ID</value>
   </data>
-  <data name="IDFinder_HeaderState" xml:space="preserve">
+  <data name="IDFinder_HeaderState.Text" xml:space="preserve">
     <value>状态</value>
   </data>
-  <data name="IDFinder_HeaderActions" xml:space="preserve">
+  <data name="IDFinder_HeaderActions.Text" xml:space="preserve">
     <value>快速操作</value>
   </data>
   
-  <data name="IDFinder_SelectedFeature" xml:space="preserve">
+  <data name="IDFinder_SelectedFeature.Text" xml:space="preserve">
     <value>选中的功能</value>
   </data>
-  <data name="IDFinder_DetailID" xml:space="preserve">
+  <data name="IDFinder_DetailID.Text" xml:space="preserve">
     <value>Feature ID</value>
   </data>
-  <data name="IDFinder_DetailState" xml:space="preserve">
+  <data name="IDFinder_DetailState.Text" xml:space="preserve">
     <value>当前状态</value>
   </data>
-  <data name="IDFinder_DetailValue" xml:space="preserve">
+  <data name="IDFinder_DetailValue.Text" xml:space="preserve">
     <value>状态值</value>
   </data>
   
@@ -297,7 +297,7 @@
   <data name="IDFinder_CopyButton.Content" xml:space="preserve">
     <value>复制 ID</value>
   </data>
-  <data name="IDFinder_CopyButtonText" xml:space="preserve">
+  <data name="IDFinder_CopyButtonText.Text" xml:space="preserve">
     <value>复制到剪贴板</value>
   </data>
   
@@ -315,7 +315,7 @@
   </data>
 
   <!-- 输出页面 -->
-  <data name="Output_Title" xml:space="preserve">
+  <data name="Output_Title.Text" xml:space="preserve">
     <value>执行输出</value>
   </data>
   <data name="Output_Copy.Content" xml:space="preserve">
@@ -329,27 +329,27 @@
   </data>
 
   <!-- 设置页面 -->
-  <data name="Settings_Appearance" xml:space="preserve">
-    <value>外观</value>
-  </data>
-  <data name="Theme_System.Content" xml:space="preserve">
-    <value>跟随系统</value>
-  </data>
-  <data name="Theme_Light.Content" xml:space="preserve">
-    <value>浅色模式</value>
-  </data>
-  <data name="Theme_Dark.Content" xml:space="preserve">
-    <value>深色模式</value>
-  </data>
-  <data name="Backdrop_Mica.Content" xml:space="preserve">
-    <value>Mica 背景</value>
-  </data>
-  <data name="Backdrop_Acrylic.Content" xml:space="preserve">
-    <value>亚克力背景</value>
-  </data>
+  <data name="Settings_Appearance.Text"><value>外观设置</value></data>
+  <data name="AppearanceGroup.Text"><value>外观与材质</value></data>
+  <data name="ThemeHeaderSubtitle.Text"><value>选择应用的显示主题</value></data>
+  <data name="MaterialHeaderSubtitle.Text"><value>选择窗口背景材质</value></data>
+  <data name="Settings_Theme.Text"><value>应用主题</value></data>
+  <data name="Settings_Backdrop.Text"><value>背景材质</value></data>
+  <data name="Theme_System.Content"><value>跟随系统</value></data>
+  <data name="Theme_Light.Content"><value>浅色</value></data>
+  <data name="Theme_Dark.Content"><value>深色</value></data>
+  <data name="Backdrop_Mica.Content"><value>Mica</value></data>
+  <data name="Backdrop_Mica_Alt.Content"><value>Mica Alt</value></data>
+  <data name="Backdrop_Acrylic.Content"><value>Acrylic</value></data>
   
-  <data name="Settings_Kernel" xml:space="preserve">
+  <data name="Settings_Kernel.Text" xml:space="preserve">
     <value>ViveTool 内核</value>
+  </data>
+  <data name="Settings_CurrentVersion.Text" xml:space="preserve">
+    <value>当前版本</value>
+  </data>
+  <data name="Kernel_AutoUpdate.Header" xml:space="preserve">
+    <value>启动时自动检查更新</value>
   </data>
   <data name="Kernel_CheckUpdate.Content" xml:space="preserve">
     <value>检查更新</value>
@@ -363,11 +363,8 @@
   <data name="Kernel_Restore.Content" xml:space="preserve">
     <value>还原内核</value>
   </data>
-  <data name="Kernel_AutoUpdate.Header" xml:space="preserve">
-    <value>启动时自动检查更新</value>
-  </data>
   
-  <data name="Settings_App" xml:space="preserve">
+  <data name="Settings_App.Text" xml:space="preserve">
     <value>应用设置</value>
   </data>
   <data name="App_ExportSettings.Content" xml:space="preserve">
@@ -380,7 +377,7 @@
     <value>重置设置</value>
   </data>
   
-  <data name="Settings_About.Header" xml:space="preserve">
+  <data name="Settings_About.Text" xml:space="preserve">
     <value>关于</value>
   </data>
   <data name="About_GitHub.Content" xml:space="preserve">

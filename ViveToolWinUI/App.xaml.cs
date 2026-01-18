@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
+using Microsoft.Windows.AppLifecycle;
 using System.Threading.Tasks;
 
 namespace ViveToolWinUI
@@ -19,29 +20,49 @@ namespace ViveToolWinUI
             InitializeComponent();
         }
 
-        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-            // 不在启动时自动尝试提权或重启为管理员
-            // 由具体需要提权的操作在运行时显式触发 UAC（例如通过 ProcessStartInfo.Verb="runas" 或 helper.exe）
-            MainWindow = new MainWindow();
-            MainWindow.Activate();
+            // 单实例逻辑：只允许运行一个进程
+            var key = "ViveToolWinUI_SingleInstance";
+            var instance = AppInstance.FindOrRegisterForKey(key);
 
-            // 启动即显示假 Splash 覆盖层
-            MainWindow.ShowSplashOverlay();
-
-            // 异步初始化完成后隐藏（你可以替换为真实初始化任务的完成点）
-            _ = Task.Run(async () =>
+            if (!instance.IsCurrent)
             {
-                await Task.Delay(500); // UI 稳定
-                MainWindow!.DispatcherQueue.TryEnqueue(() =>
-                {
-                    // 在此加入非关键初始化逻辑（读取设置、准备资源等）
-                });
+                // 已经有实例在运行，把激活请求转发过去并退出
+                instance.RedirectActivationToAsync(AppInstance.GetCurrent().GetActivatedEventArgs()).AsTask().Wait();
+                Environment.Exit(0);
+                return;
+            }
 
-                await Task.Delay(1000); // 模拟其他初始化
-                MainWindow!.DispatcherQueue.TryEnqueue(MainWindow.HideSplashOverlay);
-            });
+            // 确保只创建一次窗口
+            if (MainWindow == null)
+            {
+                MainWindow = new MainWindow();
+                MainWindow.Activate();
+
+                // 启动即显示假 Splash 覆盖层
+                MainWindow.ShowSplashOverlay();
+
+                // 异步初始化完成后隐藏（你可以替换为真实初始化任务的完成点）
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(500); // UI 稳定
+                    MainWindow!.DispatcherQueue.TryEnqueue(() =>
+                    {
+                        // 在此加入非关键初始化逻辑（读取设置、准备资源等）
+                    });
+
+                    await Task.Delay(1000); // 模拟其他初始化
+                    MainWindow!.DispatcherQueue.TryEnqueue(MainWindow.HideSplashOverlay);
+                });
+            }
+            else
+            {
+                // 如果已有窗口，直接激活它
+                MainWindow.Activate();
+            }
         }
+
 
         private static bool IsElevated()
         {

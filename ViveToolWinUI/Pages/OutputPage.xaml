@@ -12,8 +12,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Uid="Output_Title" Style="{StaticResource TitleTextBlockStyle}"/>
-
         <Border Grid.Row="2" 
                 Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                 CornerRadius="8" Padding="16">

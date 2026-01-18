@@ -5,13 +5,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
 
     <ScrollViewer Padding="24">
-        <StackPanel Spacing="24" MaxWidth="1200">
-
-            <!-- 标题 -->
-            <StackPanel Spacing="8">
-                <TextBlock x:Uid="IDFinder_Title" Style="{StaticResource TitleTextBlockStyle}"/>
-                <TextBlock x:Uid="IDFinder_Description" TextWrapping="Wrap" Opacity="0.7"/>
-            </StackPanel>
+        <StackPanel Spacing="24">
 
             <!-- 系统信息卡片 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"

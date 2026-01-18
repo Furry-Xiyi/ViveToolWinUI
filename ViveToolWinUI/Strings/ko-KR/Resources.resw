@@ -2,400 +2,412 @@
 <root>
   <!-- Common -->
   <data name="Confirm_Title" xml:space="preserve">
-    <value>Confirm</value>
+    <value>확인</value>
   </data>
   <data name="Confirm_Yes" xml:space="preserve">
-    <value>Yes</value>
+    <value>예</value>
   </data>
   <data name="Confirm_No" xml:space="preserve">
-    <value>No</value>
+    <value>아니요</value>
   </data>
   <data name="Confirm_OK" xml:space="preserve">
-    <value>OK</value>
+    <value>확인</value>
   </data>
   <data name="Confirm_Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>취소</value>
   </data>
 
   <!-- Navigation -->
   <data name="Nav_QuickActions.Content" xml:space="preserve">
-    <value>Quick Actions</value>
+    <value>빠른 작업</value>
   </data>
   <data name="Nav_IDFinder.Content" xml:space="preserve">
-    <value>Find Feature IDs</value>
+    <value>기능 ID 찾기</value>
   </data>
   <data name="Nav_Output.Content" xml:space="preserve">
-    <value>Output Log</value>
+    <value>출력 로그</value>
   </data>
 
   <!-- ViveTool Page -->
   <data name="ViveTool_Title.Text" xml:space="preserve">
-    <value>ViveTool Quick Actions</value>
+    <value>ViveTool 빠른 작업</value>
   </data>
   <data name="ViveTool_QuickCommands.Text" xml:space="preserve">
-    <value>Quick Commands</value>
+    <value>빠른 명령</value>
   </data>
   <data name="ViveTool_Query.Content" xml:space="preserve">
-    <value>Query Features</value>
+    <value>기능 조회</value>
   </data>
   <data name="ViveTool_FullReset.Content" xml:space="preserve">
-    <value>Full Reset</value>
+    <value>전체 재설정</value>
   </data>
   <data name="ViveTool_ChangeStamp.Content" xml:space="preserve">
-    <value>Change Stamp</value>
+    <value>스탬프 변경</value>
   </data>
   <data name="ViveTool_Version.Content" xml:space="preserve">
-    <value>Version Info</value>
+    <value>버전 정보</value>
   </data>
   <data name="ViveTool_Export.Content" xml:space="preserve">
-    <value>Export Config</value>
+    <value>구성 내보내기</value>
   </data>
   <data name="ViveTool_Import.Content" xml:space="preserve">
-    <value>Import Config</value>
+    <value>구성 가져오기</value>
   </data>
   <data name="ViveTool_LkgStatus.Content" xml:space="preserve">
-    <value>LKG Status</value>
+    <value>LKG 상태</value>
   </data>
   <data name="ViveTool_FixLkg.Content" xml:space="preserve">
-    <value>Fix LKG</value>
+    <value>LKG 수정</value>
   </data>
   <data name="ViveTool_QuerySubs.Content" xml:space="preserve">
-    <value>Query Subscriptions</value>
+    <value>구독 조회</value>
   </data>
   <data name="ViveTool_AddSub.Content" xml:space="preserve">
-    <value>Add Subscription</value>
+    <value>구독 추가</value>
   </data>
   <data name="ViveTool_DelSub.Content" xml:space="preserve">
-    <value>Delete Subscription</value>
+    <value>구독 삭제</value>
   </data>
   <data name="ViveTool_FixPriority.Content" xml:space="preserve">
-    <value>Fix Priority</value>
+    <value>우선순위 수정</value>
   </data>
   
   <data name="ViveTool_FeatureManagement.Text" xml:space="preserve">
-    <value>Feature Management</value>
+    <value>기능 관리</value>
   </data>
   <data name="ViveTool_FeatureIdBox.PlaceholderText" xml:space="preserve">
-    <value>Enter Feature IDs (comma-separated)</value>
+    <value>기능 ID 입력(쉼표로 구분)</value>
   </data>
   <data name="ViveTool_Enable.Content" xml:space="preserve">
-    <value>Enable</value>
+    <value>활성화</value>
   </data>
   <data name="ViveTool_Disable.Content" xml:space="preserve">
-    <value>Disable</value>
+    <value>비활성화</value>
   </data>
   <data name="ViveTool_Reset.Content" xml:space="preserve">
-    <value>Reset</value>
+    <value>재설정</value>
   </data>
   <data name="ViveTool_AutoReboot.Content" xml:space="preserve">
-    <value>Auto-reboot after execution</value>
+    <value>실행 후 자동 재부팅</value>
   </data>
   
   <data name="ViveTool_CustomCommand.Text" xml:space="preserve">
-    <value>Custom Command</value>
+    <value>사용자 명령</value>
   </data>
   <data name="ViveTool_CustomBox.PlaceholderText" xml:space="preserve">
-    <value>Enter ViveTool command arguments</value>
+    <value>ViveTool 명령 인수 입력</value>
   </data>
   <data name="ViveTool_RunCustom.Content" xml:space="preserve">
-    <value>Run Command</value>
+    <value>명령 실행</value>
   </data>
   <data name="ViveTool_ViewOutput.Content" xml:space="preserve">
-    <value>View Output</value>
+    <value>출력 보기</value>
   </data>
   
   <data name="ViveTool_History.Text" xml:space="preserve">
-    <value>Command History</value>
+    <value>명령 기록</value>
   </data>
   <data name="ViveTool_ClearHistory.Content" xml:space="preserve">
-    <value>Clear History</value>
+    <value>기록 지우기</value>
   </data>
 
   <!-- Messages -->
   <data name="ViveTool_EmptyId" xml:space="preserve">
-    <value>Please enter Feature ID</value>
+    <value>기능 ID를 입력하세요</value>
   </data>
   <data name="ViveTool_EmptyCommand" xml:space="preserve">
-    <value>Please enter command</value>
+    <value>명령을 입력하세요</value>
   </data>
   <data name="ViveTool_enableSuccess" xml:space="preserve">
-    <value>Feature enabled successfully</value>
+    <value>기능이 성공적으로 활성화되었습니다</value>
   </data>
   <data name="ViveTool_disableSuccess" xml:space="preserve">
-    <value>Feature disabled successfully</value>
+    <value>기능이 성공적으로 비활성화되었습니다</value>
   </data>
   <data name="ViveTool_resetSuccess" xml:space="preserve">
-    <value>Feature reset successfully</value>
+    <value>기능이 성공적으로 재설정되었습니다</value>
   </data>
   <data name="ViveTool_ExecutionSuccess" xml:space="preserve">
-    <value>Execution successful</value>
+    <value>실행 성공</value>
   </data>
   <data name="ViveTool_ExecutionFailed" xml:space="preserve">
-    <value>Execution failed. Check output log for details</value>
+    <value>실행 실패. 자세한 내용은 출력 로그를 확인하세요</value>
   </data>
 
   <!-- Confirmations -->
   <data name="ViveTool_FullResetConfirm" xml:space="preserve">
-    <value>This will reset all feature configurations. Continue?</value>
+    <value>이 작업은 모든 기능 구성을 재설정합니다. 계속하시겠습니까?</value>
   </data>
   <data name="ViveTool_ImportConfirm" xml:space="preserve">
-    <value>This will import configuration and overwrite existing settings. Continue?</value>
+    <value>이 작업은 구성을 가져와 기존 설정을 덮어씁니다. 계속하시겠습니까?</value>
   </data>
   <data name="ViveTool_FixLkgConfirm" xml:space="preserve">
-    <value>This will fix Last Known Good configuration. Continue?</value>
+    <value>이 작업은 마지막 정상 구성(LKG)을 복구합니다. 계속하시겠습니까?</value>
   </data>
   <data name="ViveTool_ClearHistoryConfirm" xml:space="preserve">
-    <value>Are you sure you want to clear all history?</value>
+    <value>모든 기록을 삭제하시겠습니까?</value>
   </data>
   
   <data name="ViveTool_AddSubTitle" xml:space="preserve">
-    <value>Add Subscription</value>
+    <value>구독 추가</value>
   </data>
   <data name="ViveTool_AddSubMessage" xml:space="preserve">
-    <value>Enter subscription identifier</value>
+    <value>구독 식별자를 입력하세요</value>
   </data>
   <data name="ViveTool_DelSubTitle" xml:space="preserve">
-    <value>Delete Subscription</value>
+    <value>구독 삭제</value>
   </data>
   <data name="ViveTool_DelSubMessage" xml:space="preserve">
-    <value>Enter subscription identifier to delete</value>
+    <value>삭제할 구독 식별자를 입력하세요</value>
   </data>
 
   <!-- Reboot -->
   <data name="Reboot_Title" xml:space="preserve">
-    <value>Restart Required</value>
+    <value>재시작 필요</value>
   </data>
   <data name="Reboot_Message" xml:space="preserve">
-    <value>Changes require a restart to take effect. Restart now?</value>
+    <value>변경 사항을 적용하려면 재시작이 필요합니다. 지금 재시작하시겠습니까?</value>
   </data>
   <data name="Reboot_Now" xml:space="preserve">
-    <value>Restart Now</value>
+    <value>지금 재시작</value>
   </data>
   <data name="Reboot_Later" xml:space="preserve">
-    <value>Restart Later</value>
+    <value>나중에 재시작</value>
   </data>
 
   <!-- ID Finder Page -->
   <data name="IDFinder_Title.Text" xml:space="preserve">
-    <value>Find Available Feature IDs</value>
+    <value>사용 가능한 기능 ID 찾기</value>
   </data>
   <data name="IDFinder_Description.Text" xml:space="preserve">
-    <value>Query all available Windows feature IDs and their current states on your system</value>
+    <value>시스템에서 사용 가능한 모든 Windows 기능 ID와 현재 상태를 조회합니다</value>
   </data>
   <data name="IDFinder_SystemInfo.Text" xml:space="preserve">
-    <value>System Information</value>
+    <value>시스템 정보</value>
   </data>
   <data name="IDFinder_WindowsVersion.Text" xml:space="preserve">
-    <value>Windows Version</value>
+    <value>Windows 버전</value>
   </data>
   <data name="IDFinder_BuildNumber.Text" xml:space="preserve">
-    <value>Build Number</value>
+    <value>빌드 번호</value>
   </data>
   <data name="IDFinder_Architecture.Text" xml:space="preserve">
-    <value>Architecture</value>
+    <value>아키텍처</value>
   </data>
   
   <data name="IDFinder_Options.Header" xml:space="preserve">
-    <value>Find Options</value>
+    <value>검색 옵션</value>
   </data>
   <data name="IDFinder_FilterLabel.Text" xml:space="preserve">
-    <value>Display Filters</value>
+    <value>표시 필터</value>
   </data>
   <data name="IDFinder_ShowEnabled.Content" xml:space="preserve">
-    <value>Show enabled features</value>
+    <value>활성화된 기능 표시</value>
   </data>
   <data name="IDFinder_ShowDisabled.Content" xml:space="preserve">
-    <value>Show disabled features</value>
+    <value>비활성화된 기능 표시</value>
   </data>
   <data name="IDFinder_ShowDefault.Content" xml:space="preserve">
-    <value>Show default features</value>
+    <value>기본 기능 표시</value>
   </data>
   <data name="IDFinder_SortLabel.Text" xml:space="preserve">
-    <value>Sort By</value>
+    <value>정렬 기준</value>
   </data>
   <data name="IDFinder_SortById.Content" xml:space="preserve">
-    <value>Sort by ID</value>
+    <value>ID로 정렬</value>
   </data>
   <data name="IDFinder_SortByState.Content" xml:space="preserve">
-    <value>Sort by State</value>
+    <value>상태로 정렬</value>
   </data>
   
   <data name="IDFinder_QueryButton.Content" xml:space="preserve">
-    <value>Start Query</value>
+    <value>조회 시작</value>
   </data>
   <data name="IDFinder_RefreshButton.Content" xml:space="preserve">
-    <value>Refresh</value>
+    <value>새로 고침</value>
   </data>
   <data name="IDFinder_ExportJson.Content" xml:space="preserve">
-    <value>Export JSON</value>
+    <value>JSON 내보내기</value>
   </data>
   <data name="IDFinder_ExportCsv.Content" xml:space="preserve">
-    <value>Export CSV</value>
+    <value>CSV 내보내기</value>
   </data>
   
   <data name="IDFinder_StatusReady.Text" xml:space="preserve">
-    <value>Ready</value>
+    <value>준비됨</value>
   </data>
   <data name="IDFinder_StatusQuerying" xml:space="preserve">
-    <value>Querying features...</value>
+    <value>기능을 조회하는 중...</value>
   </data>
   <data name="IDFinder_StatusComplete" xml:space="preserve">
-    <value>Query completed</value>
+    <value>조회 완료</value>
   </data>
   <data name="IDFinder_StatusError" xml:space="preserve">
-    <value>Query failed</value>
+    <value>조회 실패</value>
   </data>
   
   <data name="IDFinder_Results.Text" xml:space="preserve">
-    <value>Query Results</value>
+    <value>조회 결과</value>
   </data>
   <data name="IDFinder_TotalCount.Text" xml:space="preserve">
-    <value>Total</value>
+    <value>총계</value>
   </data>
   <data name="IDFinder_EnabledCount.Text" xml:space="preserve">
-    <value>Enabled</value>
+    <value>활성</value>
   </data>
   <data name="IDFinder_DisabledCount.Text" xml:space="preserve">
-    <value>Disabled</value>
+    <value>비활성</value>
   </data>
   
   <data name="IDFinder_SearchBox.PlaceholderText" xml:space="preserve">
-    <value>Search Feature ID...</value>
+    <value>기능 ID 검색...</value>
   </data>
   <data name="IDFinder_HeaderID.Text" xml:space="preserve">
-    <value>Feature ID</value>
+    <value>기능 ID</value>
   </data>
   <data name="IDFinder_HeaderState.Text" xml:space="preserve">
-    <value>State</value>
+    <value>상태</value>
   </data>
   <data name="IDFinder_HeaderActions.Text" xml:space="preserve">
-    <value>Quick Action</value>
+    <value>빠른 작업</value>
   </data>
   
   <data name="IDFinder_SelectedFeature.Text" xml:space="preserve">
-    <value>Selected Feature</value>
+    <value>선택된 기능</value>
   </data>
   <data name="IDFinder_DetailID.Text" xml:space="preserve">
-    <value>Feature ID</value>
+    <value>기능 ID</value>
   </data>
   <data name="IDFinder_DetailState.Text" xml:space="preserve">
-    <value>Current State</value>
+    <value>현재 상태</value>
   </data>
   <data name="IDFinder_DetailValue.Text" xml:space="preserve">
-    <value>State Value</value>
+    <value>상태 값</value>
   </data>
   
   <data name="IDFinder_EnableButton.Content" xml:space="preserve">
-    <value>Enable Feature</value>
+    <value>기능 활성화</value>
   </data>
   <data name="IDFinder_DisableButton.Content" xml:space="preserve">
-    <value>Disable Feature</value>
+    <value>기능 비활성화</value>
   </data>
   <data name="IDFinder_ResetButton.Content" xml:space="preserve">
-    <value>Reset Feature</value>
+    <value>기능 재설정</value>
   </data>
   <data name="IDFinder_CopyButton.Content" xml:space="preserve">
-    <value>Copy ID</value>
+    <value>ID 복사</value>
   </data>
   <data name="IDFinder_CopyButtonText.Text" xml:space="preserve">
-    <value>Copy to Clipboard</value>
+    <value>클립보드에 복사</value>
   </data>
   
   <data name="IDFinder_QuerySuccess" xml:space="preserve">
-    <value>Query completed successfully</value>
+    <value>조회가 성공적으로 완료되었습니다</value>
   </data>
   <data name="IDFinder_QueryFailed" xml:space="preserve">
-    <value>Query failed</value>
+    <value>조회 실패</value>
   </data>
   <data name="IDFinder_CopySuccess" xml:space="preserve">
-    <value>Feature ID copied to clipboard</value>
+    <value>기능 ID가 클립보드에 복사되었습니다</value>
   </data>
   <data name="IDFinder_ExportSuccess" xml:space="preserve">
-    <value>Export successful</value>
+    <value>내보내기 성공</value>
   </data>
 
   <!-- Output Page -->
   <data name="Output_Title.Text" xml:space="preserve">
-    <value>Execution Output</value>
+    <value>실행 출력</value>
   </data>
   <data name="Output_Copy.Content" xml:space="preserve">
-    <value>Copy</value>
+    <value>복사</value>
   </data>
   <data name="Output_Save.Content" xml:space="preserve">
-    <value>Save</value>
+    <value>저장</value>
   </data>
   <data name="Output_Back.Content" xml:space="preserve">
-    <value>Back</value>
+    <value>뒤로</value>
   </data>
 
   <!-- Settings Page -->
   <data name="Settings_Appearance.Text" xml:space="preserve">
-    <value>Appearance</value>
+    <value>외관</value>
   </data>
+<data name="AppearanceGroup.Text" xml:space="preserve">
+  <value>외관 및 재질</value>
+</data>
+<data name="ThemeHeaderSubtitle.Text" xml:space="preserve">
+  <value>앱 테마를 선택하세요</value>
+</data>
+<data name="MaterialHeaderSubtitle.Text" xml:space="preserve">
+  <value>창 배경 재질을 선택하세요</value>
+</data>
   <data name="Settings_Theme.Text" xml:space="preserve">
-    <value>App Theme</value>
+    <value>앱 테마</value>
   </data>
   <data name="Settings_Backdrop.Text" xml:space="preserve">
-    <value>Background Material</value>
+    <value>배경 재질</value>
   </data>
   <data name="Theme_System.Content" xml:space="preserve">
-    <value>System Default</value>
+    <value>시스템 기본값</value>
   </data>
   <data name="Theme_Light.Content" xml:space="preserve">
-    <value>Light</value>
+    <value>라이트 모드</value>
   </data>
   <data name="Theme_Dark.Content" xml:space="preserve">
-    <value>Dark</value>
+    <value>다크 모드</value>
   </data>
   <data name="Backdrop_Mica.Content" xml:space="preserve">
-    <value>Mica Backdrop</value>
+    <value>마이카</value>
+  </data>
+  <data name="Backdrop_Mica_Alt.Content" xml:space="preserve">
+    <value>마이카(대체)</value>
   </data>
   <data name="Backdrop_Acrylic.Content" xml:space="preserve">
-    <value>Acrylic Backdrop</value>
+    <value>아크릴</value>
   </data>
   
   <data name="Settings_Kernel.Text" xml:space="preserve">
-    <value>ViveTool Kernel</value>
+    <value>ViveTool 커널</value>
   </data>
   <data name="Settings_CurrentVersion.Text" xml:space="preserve">
-    <value>Current Version</value>
+    <value>현재 버전</value>
   </data>
   <data name="Kernel_AutoUpdate.Header" xml:space="preserve">
-    <value>Check for updates on startup</value>
+    <value>시작 시 업데이트 확인</value>
   </data>
   <data name="Kernel_CheckUpdate.Content" xml:space="preserve">
-    <value>Check for Updates</value>
+    <value>업데이트 확인</value>
   </data>
   <data name="Kernel_OpenFolder.Content" xml:space="preserve">
-    <value>Open Folder</value>
+    <value>폴더 열기</value>
   </data>
   <data name="Kernel_Backup.Content" xml:space="preserve">
-    <value>Backup Kernel</value>
+    <value>커널 백업</value>
   </data>
   <data name="Kernel_Restore.Content" xml:space="preserve">
-    <value>Restore Kernel</value>
+    <value>커널 복원</value>
   </data>
   
   <data name="Settings_App.Text" xml:space="preserve">
-    <value>Application Settings</value>
+    <value>애플리케이션 설정</value>
   </data>
   <data name="App_ExportSettings.Content" xml:space="preserve">
-    <value>Export Settings</value>
+    <value>설정 내보내기</value>
   </data>
   <data name="App_ImportSettings.Content" xml:space="preserve">
-    <value>Import Settings</value>
+    <value>설정 가져오기</value>
   </data>
   <data name="App_ResetSettings.Content" xml:space="preserve">
-    <value>Reset Settings</value>
+    <value>설정 재설정</value>
   </data>
   
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>About</value>
+    <value>정보</value>
   </data>
   <data name="About_GitHub.Content" xml:space="preserve">
-    <value>Visit GitHub</value>
+    <value>GitHub 방문</value>
   </data>
   <data name="About_Feedback.Content" xml:space="preserve">
-    <value>Submit Feedback</value>
+    <value>피드백 제출</value>
   </data>
 </root>
