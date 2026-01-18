@@ -5,38 +5,105 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
 
     <ScrollViewer Padding="24">
-        <StackPanel Spacing="24" MaxWidth="800">
+        <StackPanel Spacing="24">
 
-            <!-- 外观设置 -->
-            <StackPanel Spacing="12">
-                <TextBlock x:Uid="Settings_Appearance" 
-                          Style="{StaticResource SubtitleTextBlockStyle}"/>
+            <!-- 外观与材质组 -->
+            <StackPanel Spacing="12" HorizontalAlignment="Stretch">
 
-                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                       CornerRadius="8" Padding="16">
-                    <StackPanel Spacing="16">
+                <!-- 分组标题 -->
+                <TextBlock x:Uid="AppearanceGroup"
+               FontSize="20"
+               FontWeight="SemiBold"
+               Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
 
-                        <!-- 主题选择 -->
-                        <StackPanel Spacing="8">
-                            <TextBlock x:Uid="Settings_Theme" FontWeight="SemiBold"/>
-                            <muxc:RadioButtons x:Name="ThemeSelector" SelectionChanged="Theme_Changed">
-                                <RadioButton x:Uid="Theme_System" Tag="System"/>
-                                <RadioButton x:Uid="Theme_Light" Tag="Light"/>
-                                <RadioButton x:Uid="Theme_Dark" Tag="Dark"/>
-                            </muxc:RadioButtons>
+                <!-- 应用主题折叠卡 -->
+                <muxc:Expander x:Name="ThemeExpander"
+                   IsExpanded="False"
+                   HorizontalAlignment="Stretch"
+                   HorizontalContentAlignment="Left"
+                   MinHeight="70">
+
+                    <muxc:Expander.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE706;" Width="30" FontSize="20" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock x:Uid="Settings_Theme"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="ThemeHeaderSubtitle"
+                               FontSize="12"
+                               Opacity="0.7"
+                               Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            </StackPanel>
                         </StackPanel>
+                    </muxc:Expander.Header>
 
-                        <!-- 背景材质 -->
-                        <StackPanel Spacing="8">
-                            <TextBlock x:Uid="Settings_Backdrop" FontWeight="SemiBold"/>
-                            <muxc:RadioButtons x:Name="BackdropSelector" SelectionChanged="Backdrop_Changed">
-                                <RadioButton x:Uid="Backdrop_Mica" Tag="Mica"/>
-                                <RadioButton x:Uid="Backdrop_Acrylic" Tag="Acrylic"/>
-                            </muxc:RadioButtons>
+                    <muxc:Expander.Content>
+                        <StackPanel Spacing="8" Padding="12,0,0,12" HorizontalAlignment="Left">
+                            <RadioButton x:Name="ThemeSystem"
+                             x:Uid="Theme_System"
+                             Checked="Theme_Checked"
+                             Tag="System"/>
+
+                            <RadioButton x:Name="ThemeLight"
+                             x:Uid="Theme_Light"
+                             Checked="Theme_Checked"
+                             Tag="Light"/>
+
+                            <RadioButton x:Name="ThemeDark"
+                             x:Uid="Theme_Dark"
+                             Checked="Theme_Checked"
+                             Tag="Dark"/>
                         </StackPanel>
+                    </muxc:Expander.Content>
+                </muxc:Expander>
 
-                    </StackPanel>
-                </Border>
+                <!-- 背景材质折叠卡 -->
+                <muxc:Expander x:Name="MaterialExpander"
+                   IsExpanded="False"
+                   HorizontalAlignment="Stretch"
+                   HorizontalContentAlignment="Left"
+                   MinHeight="70">
+
+                    <muxc:Expander.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE2B1;" Width="30" FontSize="20" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock x:Uid="Settings_Backdrop"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                                <TextBlock x:Uid="MaterialHeaderSubtitle"
+                               FontSize="12"
+                               Opacity="0.7"
+                               Foreground="{ThemeResource TextFillColorPrimaryBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </muxc:Expander.Header>
+
+                    <muxc:Expander.Content>
+                        <StackPanel Spacing="8" Padding="12,0,0,12" HorizontalAlignment="Left">
+
+                            <RadioButton x:Name="MaterialMica"
+                             x:Uid="Backdrop_Mica"
+                             Checked="Material_Checked"
+                             Tag="Mica"/>
+
+                            <RadioButton x:Name="MaterialMicaAlt"
+                             x:Uid="Backdrop_Mica_Alt"
+                             Checked="Material_Checked"
+                             Tag="Mica_Alt"/>
+
+                            <RadioButton x:Name="MaterialAcrylic"
+                             x:Uid="Backdrop_Acrylic"
+                             Checked="Material_Checked"
+                             Tag="Acrylic"/>
+
+                        </StackPanel>
+                    </muxc:Expander.Content>
+                </muxc:Expander>
+
             </StackPanel>
 
             <!-- ViveTool 内核管理 -->

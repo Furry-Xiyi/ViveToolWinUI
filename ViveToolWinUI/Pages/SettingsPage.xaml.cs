@@ -32,13 +32,15 @@ namespace ViveToolWinUI.Pages
 
             // 加载主题
             var theme = GetSetting("AppTheme", "System");
-            foreach (RadioButton rb in ThemeSelector.Items)
-                if (rb.Tag?.ToString() == theme) rb.IsChecked = true;
+            ThemeSystem.IsChecked = theme == "System";
+            ThemeLight.IsChecked = theme == "Light";
+            ThemeDark.IsChecked = theme == "Dark";
 
-            // 加载背景
+            // 加载背景材质
             var backdrop = GetSetting("BackgroundMaterial", "Mica");
-            foreach (RadioButton rb in BackdropSelector.Items)
-                if (rb.Tag?.ToString() == backdrop) rb.IsChecked = true;
+            MaterialAcrylic.IsChecked = backdrop == "Acrylic";
+            MaterialMica.IsChecked = backdrop == "Mica";
+            MaterialMicaAlt.IsChecked = backdrop == "Mica_Alt";
 
             // 加载自动更新
             AutoUpdateToggle.IsOn = GetSettingBool("AutoUpdateViveTool", true);
@@ -51,26 +53,22 @@ namespace ViveToolWinUI.Pages
 
             _isLoading = false;
         }
-
-        // 主题切换
-        private void Theme_Changed(object sender, SelectionChangedEventArgs e)
+        private void Theme_Checked(object sender, RoutedEventArgs e)
         {
-            if (_isLoading || sender is not RadioButtons rb) return;
+            if (_isLoading || sender is not RadioButton rb) return;
 
-            var selected = (rb.SelectedItem as RadioButton)?.Tag?.ToString();
+            var selected = rb.Tag?.ToString();
             if (selected != null)
             {
                 SaveSetting("AppTheme", selected);
                 ApplyToMainWindow();
             }
         }
-
-        // 背景切换
-        private void Backdrop_Changed(object sender, SelectionChangedEventArgs e)
+        private void Material_Checked(object sender, RoutedEventArgs e)
         {
-            if (_isLoading || sender is not RadioButtons rb) return;
+            if (_isLoading || sender is not RadioButton rb) return;
 
-            var selected = (rb.SelectedItem as RadioButton)?.Tag?.ToString();
+            var selected = rb.Tag?.ToString();
             if (selected != null)
             {
                 SaveSetting("BackgroundMaterial", selected);

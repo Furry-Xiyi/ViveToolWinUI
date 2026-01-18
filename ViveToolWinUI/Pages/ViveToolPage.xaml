@@ -5,10 +5,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
 
     <ScrollViewer Padding="24">
-        <StackPanel Spacing="24" MaxWidth="1000">
-
-            <!-- 标题 -->
-            <TextBlock x:Uid="ViveTool_Title" Style="{StaticResource TitleTextBlockStyle}"/>
+        <StackPanel Spacing="24">
 
             <!-- 快速命令区 -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
@@ -111,7 +108,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- 历史记录 -->
+            <!-- 历史记录 (动态生成 ListView) -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                    CornerRadius="8" Padding="16">
                 <StackPanel Spacing="12">
@@ -123,25 +120,10 @@
                                 HorizontalAlignment="Right"/>
                     </Grid>
 
-                    <ListView x:Name="LvHistory" 
-                             MaxHeight="200"
-                             SelectionMode="Single"
-                             ItemClick="History_ItemClick"
-                             IsItemClickEnabled="True">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Padding="8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding Verb}" FontWeight="SemiBold"/>
-                                    <TextBlock Text="{Binding Args}" Grid.Column="1" 
-                                              TextTrimming="CharacterEllipsis"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
+                    <!-- ListView 将在此容器中动态创建 -->
+                    <StackPanel x:Name="HistoryContainer" Spacing="8">
+                        <!-- ListView 会通过代码添加到这里 -->
+                    </StackPanel>
                 </StackPanel>
             </Border>
 

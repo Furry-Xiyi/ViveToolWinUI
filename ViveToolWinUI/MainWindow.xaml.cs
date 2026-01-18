@@ -29,7 +29,8 @@ namespace ViveToolWinUI
         private AppWindow _appWindow;
         private readonly ApplicationDataContainer _settings = ApplicationData.Current.LocalSettings;
         private Microsoft.UI.Dispatching.DispatcherQueueTimer? _toastTimer;
-        private static extern uint GetDpiForWindow(IntPtr hwnd);
+        [DllImport("user32.dll", ExactSpelling = true)]
+        private static extern uint GetDpiForWindow(IntPtr hWnd);
 
 
         // 内核路径
@@ -53,8 +54,6 @@ namespace ViveToolWinUI
                     await CheckAndPromptUpdateAsync(true);
                 });
             }
-
-            // 默认导航到第一页
             NavView.SelectedItem = NavView.MenuItems[0];
         }
 
@@ -137,7 +136,7 @@ namespace ViveToolWinUI
             batch.Completed += (s, e) =>
             {
                 SplashOverlay.Visibility = Visibility.Collapsed;
-                visual.Opacity = 1f;
+                visual.Opacity = 0f;
             };
         }
         #region 导航
@@ -572,6 +571,7 @@ exit $LASTEXITCODE
                 SystemBackdrop = material switch
                 {
                     "Acrylic" => new DesktopAcrylicBackdrop(),
+                    "Mica_Alt" => new MicaBackdrop { Kind = MicaKind.BaseAlt },
                     _ => new MicaBackdrop { Kind = MicaKind.Base }
                 };
             }

@@ -50,7 +50,14 @@ namespace ViveToolWinUI.Pages
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             await LoadSystemInfoAsync();
-            FeaturesListView.ItemsSource = _displayedFeatures;
+
+            // 延迟并使用 Items.Add 代替 ItemsSource
+            await Task.Delay(100);
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                // 不使用 ItemsSource，直接操作 Items
+                // FeaturesListView.ItemsSource = _displayedFeatures; // 删除这行
+            });
         }
 
         private async Task LoadSystemInfoAsync()
@@ -169,6 +176,11 @@ namespace ViveToolWinUI.Pages
 
         private void ApplyFilters()
         {
+            // 清空 UI 列表
+            if (FeaturesListView != null)
+                FeaturesListView.Items.Clear();
+
+            // 同时清空内部集合（用于导出等操作）
             _displayedFeatures.Clear();
 
             var showEnabled = ChkShowEnabled.IsChecked.GetValueOrDefault();
@@ -179,26 +191,29 @@ namespace ViveToolWinUI.Pages
 
             var filtered = _allFeatures.Where(f =>
             {
-                // 状态过滤
                 if (f.StateValue == 1 && !showEnabled) return false;
                 if (f.StateValue == 0 && !showDisabled) return false;
                 if (f.StateValue == 2 && !showDefault) return false;
 
-                // 搜索过滤
                 if (!string.IsNullOrEmpty(searchQuery) && !f.Id.Contains(searchQuery))
                     return false;
 
                 return true;
             });
 
-            // 排序
             var sortBy = (SortOptions.SelectedItem as RadioButton)?.Tag?.ToString() ?? "Id";
             filtered = sortBy == "State"
                 ? filtered.OrderBy(f => f.StateValue).ThenBy(f => f.Id)
                 : filtered.OrderBy(f => f.Id);
 
             foreach (var feature in filtered)
-                _displayedFeatures.Add(feature);
+            {
+                _displayedFeatures.Add(feature); // 保留用于导出
+
+                // 添加到 UI
+                if (FeaturesListView != null)
+                    FeaturesListView.Items.Add(feature);
+            }
         }
 
         private void UpdateStatistics()
